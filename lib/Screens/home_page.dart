@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:workfromhome/Other/constants.dart';
+import 'package:workfromhome/Screens/checkin_work.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -18,12 +19,20 @@ class _HomeState extends State<Home> {
              mainAxisAlignment: MainAxisAlignment.center,
              children: [
                Text(
-                 "Home",
+                 "WFH",
                )
              ],
            ),
+          elevation: 6.0,
+          shape: ContinuousRectangleBorder(
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(60.0),
+              bottomRight: Radius.circular(60.0),
+            ),
+          ),
           backgroundColor: Colors.white,
         ),
+
         backgroundColor: kPrimaryColor,
         body: Center(
             child: Container(
@@ -42,7 +51,18 @@ class _HomeState extends State<Home> {
                         height: MediaQuery.of(context).size.height * 0.07,
                         child: RaisedButton(
                           color: Colors.green,
-                          onPressed: (){},
+                          onPressed: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Checkinwork()),
+                            );
+                            //     .then((value) {
+                            //   setState(() {
+                            //     // _handleRefresh();
+                            //   });
+                            // });
+                          },
                           shape: RoundedRectangleBorder(
                             borderRadius:
                             BorderRadius.circular(30.0),
@@ -81,6 +101,6 @@ class _HomeState extends State<Home> {
         placeholder: kTransparentImage,
         width: MediaQuery.of(context).size.width * 0.8,
         image:
-        "https://lh3.googleusercontent.com/proxy/655Uyo1QEUIC4pMiTxratrOddB7f4Mmmtw3Rs7nn93jixlzxbapGlUgzCtK4viBT_Qw9IddixkzU-W6xVfUqPgYL80NpDA9Q12DItYVfDsa4HCXazIt4SFXbxe-SaYXDwHDbx1lE"),
+        "https://www2.plu.ac.th/wp-content/uploads/2020/03/WorkFromHome2.jpg"),
   );
 }

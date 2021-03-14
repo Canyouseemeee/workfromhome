@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:workfromhome/Other/services/BadgeIcon.dart';
-import 'package:workfromhome/Screens/annouce.dart';
+import 'package:workfromhome/Screens/task.dart';
 import 'package:workfromhome/Screens/home_page.dart';
 import 'package:workfromhome/Screens/menu.dart';
 
@@ -20,14 +20,14 @@ class _HomePageState extends State<HomePage> {
   bool _loading;
   StreamController<int> _countController = StreamController<int>();
   Home home = new Home();
-  Annouce annouce = new Annouce();
+  Task task = new Task();
   Menu menu = new Menu();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    pages = [home, annouce, menu];
+    pages = [home, task, menu];
     currantpage = home;
     // _loading = true;
   }
@@ -51,44 +51,50 @@ class _HomePageState extends State<HomePage> {
       //    ],
       //  ),
       // ),
-      backgroundColor: Colors.blue,
+      backgroundColor: Color(0xFF00BFFF),
       body: currantpage,
       bottomNavigationBar: RefreshIndicator(
         child: SafeArea(
-          child: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            type: BottomNavigationBarType.fixed,
-            // backgroundColor: Color(0xFF34558b),
-            selectedItemColor: Color(0xFF00BFFF),
-            items: [
-              BottomNavigationBarItem(
-                icon: StreamBuilder(
-                  initialData: _tabBarCount,
-                  stream: _countController.stream,
-                  builder: (_, snapshot) => BadgeIcon(
-                    icon: Icon(
-                      Icons.home,
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.0),
+              topRight: Radius.circular(30.0),
+            ),
+            child: BottomNavigationBar(
+              currentIndex: _currentIndex,
+              type: BottomNavigationBarType.fixed,
+              // backgroundColor: Color(0xFF34558b),
+              selectedItemColor: Color(0xFF00BFFF),
+              items: [
+                BottomNavigationBarItem(
+                  icon: StreamBuilder(
+                    initialData: _tabBarCount,
+                    stream: _countController.stream,
+                    builder: (_, snapshot) => BadgeIcon(
+                      icon: Icon(
+                        Icons.home,
+                      ),
+                      badgeCount: snapshot.data,
                     ),
-                    badgeCount: snapshot.data,
                   ),
+                  title: const Text("Home"),
                 ),
-                title: const Text("Home"),
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.campaign),
-                title: Text("Annouce"),
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.menu),
-                title: Text("Menu"),
-              ),
-            ],
-            onTap: (index) {
-              setState(() {
-                _currentIndex = index;
-                currantpage = pages[index];
-              });
-            },
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.assistant_photo),
+                  title: Text("Task"),
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.menu),
+                  title: Text("Menu"),
+                ),
+              ],
+              onTap: (index) {
+                setState(() {
+                  _currentIndex = index;
+                  currantpage = pages[index];
+                });
+              },
+            ),
           ),
         ),
         onRefresh: _handleRefresh,

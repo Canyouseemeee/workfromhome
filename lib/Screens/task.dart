@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:workfromhome/Other/constants.dart';
 
-class Annouce extends StatefulWidget {
+class Task extends StatefulWidget {
   @override
-  _AnnouceState createState() => _AnnouceState();
+  _TaskState createState() => _TaskState();
 }
 
-class _AnnouceState extends State<Annouce> {
+class _TaskState extends State<Task> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -16,17 +16,25 @@ class _AnnouceState extends State<Annouce> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Annouce",
+                "WFH",
               )
             ],
+          ),
+          elevation: 6.0,
+          shape: ContinuousRectangleBorder(
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(60.0),
+              bottomRight: Radius.circular(60.0),
+            ),
           ),
           backgroundColor: Colors.white,
         ),
         backgroundColor: kPrimaryColor,
         body: Container(
-          child: Text("Annouce"),
+          child: Text("Task"),
         ),
       ),
     );
   }
 }
+

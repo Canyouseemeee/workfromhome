@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workfromhome/Other/constants.dart';
+import 'package:workfromhome/Screens/Login/components/body.dart';
 
 class Menu extends StatefulWidget {
   @override
@@ -7,6 +9,8 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,13 +19,20 @@ class _MenuState extends State<Menu> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "Menu",
+              "WFH",
             )
           ],
         ),
+        elevation: 6.0,
+        shape: ContinuousRectangleBorder(
+          borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(60.0),
+            bottomRight: Radius.circular(60.0),
+          ),
+        ),
         backgroundColor: Colors.white,
       ),
-      backgroundColor: kPrimaryColor,
+      backgroundColor: Color(0xFF00BFFF),
       body: ListView(
         children: <Widget>[
           Card(
@@ -126,7 +137,7 @@ class _MenuState extends State<Menu> {
                                         color: Colors.redAccent,
                                         onPressed: () {
                                           setState(() {
-                                            // _showLogoutAlertDialog();
+                                            _showLogoutAlertDialog();
                                           });
                                         },
                                         shape: RoundedRectangleBorder(
@@ -198,5 +209,38 @@ class _MenuState extends State<Menu> {
       //   ],
       // ),
     );
+  }
+
+  void _showLogoutAlertDialog() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("${sharedPreferences.getString("username")} ล็อคเอ้าท์"),
+            content: Text("คุณต้องการล็อคเอ้าท์ใช่หรือไม่ ?"),
+            actions: [
+              FlatButton(
+                onPressed: () {
+                  sharedPreferences.clear();
+                  sharedPreferences.commit();
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => Body()),
+                        (Route<dynamic> route) => false,
+                  );
+                },
+                child: Text("ใช่"),
+              ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("ไม่"),
+              ),
+            ],
+          );
+        });
   }
 }

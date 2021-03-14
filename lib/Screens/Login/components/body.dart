@@ -30,8 +30,7 @@ class _BodyState extends State<Body> {
     Map data = {'username': username, 'password': password};
     var jsonData = null;
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var response =
-        await http.post("http://192.168.1.36:8000/api/login/", body: data);
+    var response = await http.post(Apiurl + "/api/login/", body: data);
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
       // print(jsonData);
@@ -42,9 +41,14 @@ class _BodyState extends State<Body> {
         sharedPreferences.setString("token", jsonData['token']);
         sharedPreferences.setString("username", username);
         sharedPreferences.setString("name", jsonData['name']);
+        sharedPreferences.setString("latitude", jsonData['latitude']);
+        sharedPreferences.setString("longitude", jsonData['longitude']);
+        sharedPreferences.setInt("userid", jsonData['userid']);
         // postloginlog(sharedPreferences.getString("username"),
         //     sharedPreferences.getString("token"));
         sharedPreferences.setString("usertype", jsonData['usertype']);
+        // print(sharedPreferences.getString("latitude"));
+        // print(sharedPreferences.getString("longitude"));
         // print(sharedPreferences.getString('email'));
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (BuildContext context) => HomePage()),
@@ -73,65 +77,68 @@ class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return (_isLoading
-        ? new Center(
-            child: new CircularProgressIndicator(
-            backgroundColor: Colors.white70,
-          ))
-        : Background(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "LOGIN",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: size.height * 0.03),
-                  FadeInImage.memoryNetwork(
-                    placeholder: kTransparentImage,
-                    image : "https://obs.line-scdn.net/0hNEnakCWFEWpTGDmMoxluPWlOEgVgdAJpNy5AaQ92T14qIVZrOnpZBHAYHQ52KVY0PSxXC3EbClstewI_antZ/w644",
-                    width: size.width * 0.8,
-                    height: size.height * 0.35,
-                  ),
-                  SizedBox(height: size.height * 0.03),
-                  // RoundedInputField(
-                  //   hintText: "Your Username",
-                  //   onChanged: (value) {},
-                  // ),
-                  // RoundedPasswordField(
-                  //   onChanged: (value) {},
-                  // ),
-                  _buildUsernameInput(),
-                  _buildPasswordInput(),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    // height: 40.0,
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    child: FlatButton(
-                      color: kPrimaryColor,
-                      padding:
-                          EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                      child:
-                          Text("Login", style: TextStyle(color: Colors.white)),
-                      onPressed: () {
-                        // _submit();
-                        if (usernameController.text != "") {
-                          signIn(
-                              usernameController.text, passwordController.text);
-                        }
-                      },
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(29),
+    return Scaffold(
+      body: (_isLoading
+          ? new Center(
+              child: new CircularProgressIndicator(
+              backgroundColor: Colors.white70,
+            ))
+          : Background(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "LOGIN",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: size.height * 0.03),
+                    FadeInImage.memoryNetwork(
+                      placeholder: kTransparentImage,
+                      image:
+                          "https://obs.line-scdn.net/0hNEnakCWFEWpTGDmMoxluPWlOEgVgdAJpNy5AaQ92T14qIVZrOnpZBHAYHQ52KVY0PSxXC3EbClstewI_antZ/w644",
+                      width: size.width * 0.8,
+                      height: size.height * 0.35,
+                    ),
+                    SizedBox(height: size.height * 0.03),
+                    // RoundedInputField(
+                    //   hintText: "Your Username",
+                    //   onChanged: (value) {},
+                    // ),
+                    // RoundedPasswordField(
+                    //   onChanged: (value) {},
+                    // ),
+                    _buildUsernameInput(),
+                    _buildPasswordInput(),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      // height: 40.0,
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: FlatButton(
+                        color: kPrimaryColor,
+                        padding:
+                            EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                        child: Text("Login",
+                            style: TextStyle(color: Colors.white)),
+                        onPressed: () {
+                          // _submit();
+                          if (usernameController.text != "") {
+                            signIn(usernameController.text,
+                                passwordController.text);
+                          }
+                        },
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(29),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: size.height * 0.03),
-                ],
+                    SizedBox(height: size.height * 0.03),
+                  ],
+                ),
               ),
-            ),
-          ));
+            )),
+    );
   }
 
   TextEditingController usernameController = new TextEditingController();
