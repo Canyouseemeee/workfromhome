@@ -1,6 +1,6 @@
 // To parse this JSON data, do
 //
-//     final welcome = welcomeFromJson(jsonString);
+//     final checkin = checkinFromJson(jsonString);
 
 import 'dart:convert';
 
@@ -15,6 +15,9 @@ class Checkin {
     this.dateStart,
     this.dateEnd,
     this.status,
+    this.file,
+    this.latitude,
+    this.longitude,
   });
 
   int checkinid;
@@ -22,6 +25,9 @@ class Checkin {
   DateTime dateStart;
   dynamic dateEnd;
   int status;
+  String file;
+  String latitude;
+  String longitude;
 
   factory Checkin.fromJson(Map<String, dynamic> json) => Checkin(
     checkinid: json["checkinid"],
@@ -29,6 +35,9 @@ class Checkin {
     dateStart: DateTime.parse(json["date_start"]),
     dateEnd: json["date_end"],
     status: json["status"],
+    file: json["file"],
+    latitude: json["latitude"],
+    longitude: json["longitude"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -37,5 +46,8 @@ class Checkin {
     "date_start": dateStart.toIso8601String(),
     "date_end": dateEnd,
     "status": status,
+    "file": file,
+    "latitude": latitude,
+    "longitude": longitude,
   };
 }

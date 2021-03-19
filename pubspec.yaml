@@ -30,13 +30,20 @@ dependencies:
   cupertino_icons: ^1.0.1
   flutter_svg: ^0.19.2+1
   transparent_image: ^1.0.0
-  google_maps_flutter: ^2.0.1
+  google_maps_flutter: ^1.0.6
   shared_preferences: ^2.0.4
   http: ^0.12.2
   geolocator: ^6.0.0+1
   buddhist_datetime_dateformat: ^1.0.6
   date_format: ^1.0.8
   intl: ^0.16.1
+  date_range_picker:
+    git:
+      url: https://github.com/LempereurBenjamin/date_range_picker
+  image_picker: ^0.6.7+17
+  video_player: ^0.10.12+4
+  dio: ^3.0.10
+  cached_network_image: ^2.5.1
 
 dev_dependencies:
   flutter_test:

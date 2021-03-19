@@ -1,17 +1,25 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:video_player/video_player.dart';
 import 'package:workfromhome/Models/Checkin.dart';
 import 'package:workfromhome/Other/constants.dart';
 import 'package:workfromhome/Other/services/Jsondata.dart';
+import 'package:workfromhome/Screens/detailcheckin.dart';
 import 'package:workfromhome/Screens/screenmap.dart';
 import 'package:http/http.dart' as http;
 import 'package:buddhist_datetime_dateformat/buddhist_datetime_dateformat.dart';
 import 'package:intl/intl.dart';
-
+import 'package:workfromhome/Screens/source_page.dart';
+import 'package:workfromhome/Screens/video_widget.dart';
 
 class Checkinwork extends StatefulWidget {
   @override
@@ -36,6 +44,11 @@ class _CheckinworkState extends State<Checkinwork> {
   int _currentMax = 10;
   String cid;
   bool _disposed = false;
+  File imageFile;
+  MediaSource source;
+  VideoPlayerController videoPlayerController;
+  Future<void> _future;
+  final df = new DateFormat('dd/MM/yyyy HH:mm a');
 
   @override
   void initState() {
@@ -68,6 +81,13 @@ class _CheckinworkState extends State<Checkinwork> {
         }
       });
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    videoPlayerController.dispose();
   }
 
   getMoreData() {
@@ -111,17 +131,18 @@ class _CheckinworkState extends State<Checkinwork> {
         });
   }
 
-  double calculateDistance(double lat1,double lon1,double lat2,double lon2){
+  double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
     var p = 0.017453292519943295;
     var c = cos;
-    var a = 0.5 - c((lat2 - lat1) * p)/2 +
-        c(lat1 * p) * c(lat2 * p) *
-            (1 - c((lon2 - lon1) * p))/2;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
 
   void getCurrentLocation() async {
-    var position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    var position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
     var lastposition = await Geolocator.getLastKnownPosition();
     // print(lastposition);
     setState(() {
@@ -131,7 +152,7 @@ class _CheckinworkState extends State<Checkinwork> {
     });
   }
 
-  checkindistance(lat,lng) async {
+  checkindistance(lat, lng) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     latpoint = double.parse(sharedPreferences.getString("latitude"));
     lngpoint = double.parse(sharedPreferences.getString("longitude"));
@@ -156,14 +177,14 @@ class _CheckinworkState extends State<Checkinwork> {
     return distance;
   }
 
-  checkinwork(){
+  checkinwork() {
     int dt = distance.toInt();
     // print(dt);
-    if(dt <= 300){
+    if (dt <= 300) {
       showAlertPostCheckin();
-    }else if(dt == null){
+    } else if (dt == null) {
       showAlertfaild();
-    }else{
+    } else {
       showAlertfaild();
     }
   }
@@ -174,48 +195,27 @@ class _CheckinworkState extends State<Checkinwork> {
         barrierDismissible: true,
         builder: (context) {
           return AlertDialog(
-            title: Text("ท่านต้องการปิดงานหรือสานงานต่อ ?"),
+            title: Text("ท่านต้องการออกงานใช่หรือไม่ ?"),
             actions: [
               FlatButton(
                 onPressed: () {
                   Navigator.pop(context);
                   // _showDialog(cid);
                   postCheckout(cid);
+                  _handleRefresh();
                 },
-                child: Text("ปิดงาน"),
+                child: Text("ออกงาน"),
               ),
-              FlatButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  // _showDialog2(cid);
-                },
-                child: Text("สานงานต่อ"),
-              ),
+              // FlatButton(
+              //   onPressed: () {
+              //     Navigator.pop(context);
+              //     // _showDialog2(cid);
+              //   },
+              //   child: Text("สานงานต่อ"),
+              // ),
             ],
           );
         });
-  }
-
-  _showDetail(int index) async {
-    await showDialog<String>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return new AlertDialog(
-            title: Text('Detail : '
-                // + _checkin[index].detail
-            ),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text('Close'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
-        }
-    );
   }
 
   showAlertfaild() async {
@@ -224,13 +224,25 @@ class _CheckinworkState extends State<Checkinwork> {
         barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
-            title: Text("ท่านไม่ได้อยู่ระยะที่จะเช็คอินได้กรุณาไปยังจุดเช็คอินของท่านบริเวณใกล้ว่านี้"),
+            title: Text(
+                "ท่านไม่ได้อยู่ระยะที่จะเช็คอินได้กรุณาไปยังจุดเช็คอินของท่านบริเวณใกล้ว่านี้"),
+            content: Text(
+              "หมายเหตุ : ท่านสามารถเช็คอินนอกสถานที่ได้จากตำแหน่งที่อยู่ของท่านเอง",
+              style: TextStyle(color: Colors.black26),
+            ),
             actions: [
               FlatButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text("OK"),
+                child: Text("ปิด"),
+              ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  showAlertPostCheckin();
+                },
+                child: Text("เช็คอินนอกสถานที่"),
               ),
             ],
           );
@@ -248,8 +260,9 @@ class _CheckinworkState extends State<Checkinwork> {
               FlatButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  postCheckin();
-                  showAlertsuccess();
+                  // postCheckin(imageFile);
+                  // showAlertsuccess();
+                  _showDialog(context);
                 },
                 child: Text("ใช่"),
               ),
@@ -275,7 +288,7 @@ class _CheckinworkState extends State<Checkinwork> {
               FlatButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  // _handleRefresh();
+                  _handleRefresh();
                 },
                 child: Text("ปิด"),
               ),
@@ -284,24 +297,63 @@ class _CheckinworkState extends State<Checkinwork> {
         });
   }
 
-  postCheckin() async {
+  postCheckin(File image) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var id;
     setState(() {
-      id = sharedPreferences.getInt("userid").toString();
+      id = sharedPreferences.getString("userid");
     });
-    if (sharedPreferences.getString("token") != null) {
-      Map data = {
-        'userid': id,
-      };
-      var jsonData = null;
-      var response = await http
-          .post(Apiurl+"/api/checkin", body: data);
-      if (response.statusCode == 200) {
-        jsonData = json.decode(response.body);
-        if (jsonData != null) {}
-      } else {
-        print(response.body);
+    // var id;
+    // setState(() {
+    //   id = sharedPreferences.getInt("userid").toString();
+    // });
+    // if (sharedPreferences.getString("token") != null) {
+    //   Map data = {
+    //     'userid': id,
+    //   };
+    //   var jsonData = null;
+    //   var response = await http
+    //       .post(Apiurl+"/api/checkin", body: data);
+    //   if (response.statusCode == 200) {
+    //     jsonData = json.decode(response.body);
+    //     if (jsonData != null) {}
+    //   } else {
+    //     print(response.body);
+    //   }
+    // }
+    if (image != null) {
+      String fileName = image.path.split('/').last;
+      if (sharedPreferences.getString("token") != null) {
+        var data = FormData.fromMap({
+          'userid': id,
+          'latitude': lat,
+          'longitude': lng,
+          "file": await MultipartFile.fromFile(
+            image.path,
+            filename: fileName,
+          ),
+        });
+        // print(fileName.toString());
+        // print(image.path.toString());
+        Dio dio = new Dio();
+        await dio
+            .post(Apiurl + "/api/checkin", data: data)
+            .then((response) => print(response))
+            .catchError((error) => print(error));
+      }
+    } else {
+      if (sharedPreferences.getString("token") != null) {
+        var data = FormData.fromMap({
+          'userid': id,
+          'latitude': lat,
+          'longitude': lng,
+          "file": null,
+        });
+        Dio dio = new Dio();
+        await dio
+            .post(Apiurl + "/api/checkin", data: data)
+            .then((response) => print(response))
+            .catchError((error) => print(error));
       }
     }
   }
@@ -313,8 +365,7 @@ class _CheckinworkState extends State<Checkinwork> {
         'checkinid': cid,
       };
       var jsonData = null;
-      var response = await http
-          .post(Apiurl+"/api/checkout", body: data);
+      var response = await http.post(Apiurl + "/api/checkout", body: data);
       if (response.statusCode == 200) {
         jsonData = json.decode(response.body);
         if (jsonData != null) {}
@@ -322,6 +373,141 @@ class _CheckinworkState extends State<Checkinwork> {
         print(response.body);
       }
     }
+  }
+
+  Future<void> _showDialog(BuildContext context) async {
+    return await showDialog<AlertDialog>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: Text('Checkin'),
+            content: Center(
+              child: Padding(
+                padding: EdgeInsets.all(32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: imageFile == null
+                          ? Icon(Icons.photo, size: 120)
+                          : (source == MediaSource.image
+                              ? Image.file(
+                                  imageFile,
+                                  width: 300,
+                                  height: 300,
+                                )
+                              : VideoWidget(imageFile)),
+                    ),
+                    // const SizedBox(height: 24),
+                  ],
+                ),
+              ),
+            ),
+            actions: <Widget>[
+              Row(
+                children: <Widget>[
+                  imageFile == null
+                      ? Container()
+                      : new FlatButton(
+                          child: new Text('SAVE'),
+                          onPressed: () {
+                            setState(() {
+                              // if (_formKey.currentState.validate()) {
+                              //   _formKey.currentState.save();
+                              postCheckin(imageFile);
+                              //   // print(news);
+                              //   // print(imageFile.path.split('/').last);
+                              Navigator.pop(context);
+                              showAlertsuccess();
+                            });
+                          },
+                        ),
+                  new FlatButton(
+                    child: new Text('Chosse Image or Video'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      showAlertCameraorVideo(context);
+                    },
+                  ),
+                  new FlatButton(
+                    child: new Text('Close'),
+                    onPressed: () {
+                      imageFile = null;
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
+
+  showAlertCameraorVideo(BuildContext context) async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("เลือก"),
+            actions: [
+              FlatButton(
+                onPressed: () {
+                  // _handleRefresh();
+                  // imageFile = null;
+                  Navigator.pop(context);
+                  // _openCamera();
+                  // pickCameraMedia(context);
+                  capture(MediaSource.image);
+                  // _showDialog(context);
+                },
+                child: Text("Camera"),
+              ),
+              FlatButton(
+                onPressed: () {
+                  // _handleRefresh();
+                  // imageFile = null;
+                  Navigator.pop(context);
+                  // _openVideo();
+                  capture(MediaSource.video);
+                  // _showDialog(context);
+                },
+                child: Text("Video"),
+              ),
+            ],
+          );
+        });
+  }
+
+  Future capture(MediaSource source) async {
+    setState(() {
+      this.source = source;
+      this.imageFile = null;
+    });
+
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => SourcePage(),
+        settings: RouteSettings(
+          arguments: source,
+        ),
+      ),
+    );
+
+    // final result = pickCameraMedia(source);
+
+    if (result == null) {
+      return;
+    } else {
+      setState(() {
+        imageFile = result;
+      });
+    }
+    _showDialog(context);
   }
 
   @override
@@ -345,9 +531,9 @@ class _CheckinworkState extends State<Checkinwork> {
       ),
       body: (_loading
           ? new Center(
-          child: new CircularProgressIndicator(
-            backgroundColor: Colors.pinkAccent,
-          ))
+              child: new CircularProgressIndicator(
+              backgroundColor: Colors.pinkAccent,
+            ))
           : _showJsondata()),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(top: 630.0),
@@ -372,10 +558,9 @@ class _CheckinworkState extends State<Checkinwork> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => MapSample(lat,lng)),
+                  MaterialPageRoute(builder: (context) => MapSample(lat, lng)),
                 );
-              } ,
+              },
               child: Icon(Icons.map),
             )
           ],
@@ -385,116 +570,118 @@ class _CheckinworkState extends State<Checkinwork> {
     );
   }
 
-  Widget _showJsondata()=> new RefreshIndicator(
-    child: ListView.builder(
-      controller: _scrollController,
-      scrollDirection: Axis.vertical,
-      itemCount: null == _checkin ? 0 : _checkin.length + 1,
-      itemExtent: 170,
-      itemBuilder: (context, index) {
-        if (_checkin.length == 0) {
-          return Center(
-            child: Text(
-              "No Result",
-              style: TextStyle(color: Colors.white70, fontSize: 20),
-            ),
-          );
-        } else {
-          if (index == _checkin.length &&
-              _checkin.length > 10 &&
-              index > 10) {
-            return Center(
-                child: CircularProgressIndicator(
+  Widget _showJsondata() => new RefreshIndicator(
+        child: ListView.builder(
+          controller: _scrollController,
+          scrollDirection: Axis.vertical,
+          itemCount: null == _checkin ? 0 : _checkin.length + 1,
+          itemExtent: 170,
+          itemBuilder: (context, index) {
+            if (_checkin.length == 0) {
+              return Center(
+                child: Text(
+                  "No Result",
+                  style: TextStyle(color: Colors.white70, fontSize: 20),
+                ),
+              );
+            } else {
+              if (index == _checkin.length &&
+                  _checkin.length > 10 &&
+                  index > 10) {
+                return Center(
+                    child: CircularProgressIndicator(
                   backgroundColor: Colors.white70,
                 ));
-          } else if (index == _checkin.length &&
-              _checkin.length <= 10 &&
-              index <= 10) {
-            return Center(child: Text(""));
-          }
-        }
-        // New _new[index] = _new[index];
-        cid = _checkin[index].checkinid.toString();
-        return  Card(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Stack(
-                children: <Widget>[
-                  Positioned.fill(
-                    child: Column(
-                      children:<Widget>[
-                        Row(
+              } else if (index == _checkin.length &&
+                  _checkin.length <= 10 &&
+                  index <= 10) {
+                return Center(child: Text(""));
+              }
+            }
+            // New _new[index] = _new[index];
+            cid = _checkin[index].checkinid.toString();
+            return Card(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Stack(
+                    children: <Widget>[
+                      Positioned.fill(
+                        child: Column(
                           children: <Widget>[
-                            Expanded(
-                              flex: 5,
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    SizedBox(
-                                      height: 16,
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  flex: 5,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 20),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          height: 16,
+                                        ),
+                                        Text(
+                                            "Name : " +
+                                                _checkin[index].name.toString(),
+                                            // overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                color: Colors.black87,
+                                                fontWeight: FontWeight.w700)),
+                                        SizedBox(
+                                          height: 16,
+                                        ),
+                                        Text(
+                                          "DateStart : " +
+                                              df
+                                                  .formatInBuddhistCalendarThai(
+                                                      _checkin[index]
+                                                          .dateStart),
+                                          style: TextStyle(
+                                              color: Colors.black45,
+                                              fontWeight: FontWeight.w700),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                        "Name : " +
-                                            _checkin[index].name.toString(),
-                                        // overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            color: Colors.black87,
-                                            fontWeight: FontWeight.w700)
-                                    ),
-                                    SizedBox(
-                                      height: 16,
-                                    ),
-                                    Text(
-                                      "DateStart : " +
-                                          formatter.formatInBuddhistCalendarThai(
-                                              _checkin[index].dateStart),
-                                      style: TextStyle(
-                                          color: Colors.black45,
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 6,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  TextStatus(index),
-                                  SizedBox(
-                                    height: 16,
                                   ),
-                                  TextDateEnd(index),
-                                ],
-                              ),
+                                ),
+                                Expanded(
+                                  flex: 6,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      TextStatus(index),
+                                      SizedBox(
+                                        height: 16,
+                                      ),
+                                      TextDateEnd(index),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
+                            showButton(index),
                           ],
                         ),
-                        showButton(index),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-          // onTap: () {
-          //   // Navigator.push(
-          //   //   context,
-          //   //   MaterialPageRoute(
-          //   //       builder: (context) => IssuesNewDetail(_new[index])),
-          //   // );
-          // },
-        );
-      },
-    ),
-    onRefresh: _handleRefresh,
-  );
+              // onTap: () {
+              //   // Navigator.push(
+              //   //   context,
+              //   //   MaterialPageRoute(
+              //   //       builder: (context) => IssuesNewDetail(_new[index])),
+              //   // );
+              // },
+            );
+          },
+        ),
+        onRefresh: _handleRefresh,
+      );
 
   Future<Null> _handleRefresh() async {
     Completer<Null> completer = new Completer<Null>();
@@ -528,19 +715,13 @@ class _CheckinworkState extends State<Checkinwork> {
     if (_checkin[index].status == 1) {
       return Text(
         "DateEnd : No Checkout",
-        style: TextStyle(
-            color: Colors.black45,
-            fontWeight: FontWeight.w700),
+        style: TextStyle(color: Colors.black45, fontWeight: FontWeight.w700),
       );
     } else if (_checkin[index].status == 2) {
       DateTime dte = DateTime.parse(_checkin[index].dateEnd);
       return Text(
-        "DateEnd : " +
-            formatter.formatInBuddhistCalendarThai(
-                dte),
-        style: TextStyle(
-            color: Colors.black45,
-            fontWeight: FontWeight.w700),
+        "DateEnd : " + df.formatInBuddhistCalendarThai(dte),
+        style: TextStyle(color: Colors.black45, fontWeight: FontWeight.w700),
       );
     }
   }
@@ -587,9 +768,18 @@ class _CheckinworkState extends State<Checkinwork> {
           color: Colors.blueGrey,
           onPressed: () {
             setState(() {
-              _showDetail(index);
+              // _showDetail(index);
               // showAlertUpdate(news);
               // showAlertCheckout(news,_checkin[index].checkinid.toString());
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DetailCheckin(_checkin[index])),
+              ).then((value) {
+                setState(() {
+                  _handleRefresh();
+                });
+              });
             });
           },
           shape: RoundedRectangleBorder(
@@ -608,7 +798,7 @@ class _CheckinworkState extends State<Checkinwork> {
           color: Colors.blueGrey,
           onPressed: () {
             setState(() {
-              _showDetail(index);
+              // _showDetail(index);
               // showAlertUpdate(news);
               // showAlertCheckout(news,_checkin[index].checkinid.toString());
             });
@@ -624,4 +814,5 @@ class _CheckinworkState extends State<Checkinwork> {
       );
     }
   }
+
 }

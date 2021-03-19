@@ -43,10 +43,10 @@ class _BodyState extends State<Body> {
         sharedPreferences.setString("name", jsonData['name']);
         sharedPreferences.setString("latitude", jsonData['latitude']);
         sharedPreferences.setString("longitude", jsonData['longitude']);
-        sharedPreferences.setInt("userid", jsonData['userid']);
+        sharedPreferences.setString("userid", jsonData['userid']);
         // postloginlog(sharedPreferences.getString("username"),
         //     sharedPreferences.getString("token"));
-        sharedPreferences.setString("usertype", jsonData['usertype']);
+        sharedPreferences.setString("department", jsonData['department']);
         // print(sharedPreferences.getString("latitude"));
         // print(sharedPreferences.getString("longitude"));
         // print(sharedPreferences.getString('email'));

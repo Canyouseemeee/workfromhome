@@ -10,6 +10,31 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> {
 
+  SharedPreferences sharedPreferences;
+  String _username;
+  String _name;
+  String _department;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _settingsection();
+  }
+
+  Future<void> _settingsection() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    final String username = sharedPreferences.getString("username");
+    final String name = sharedPreferences.getString("name");
+    final String department = sharedPreferences.getString("department");
+    setState(() {
+      _username = username;
+      _name = name;
+      _department = department;
+    });
+    // print(imageAvatar());
+    // print(sharedPreferences.getString("image").toString().substring(9).replaceAll("}]", ""));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +97,7 @@ class _MenuState extends State<Menu> {
                                       padding: const EdgeInsets.only(
                                           top: 16, left: 16, right: 16),
                                       child: Text(
-                                        "Username : ",
-                                        // +'${_username}',
+                                        "Username : "+'${_username}',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -82,8 +106,7 @@ class _MenuState extends State<Menu> {
                                       padding: const EdgeInsets.only(
                                           top: 16, left: 16, right: 16),
                                       child: Text(
-                                        "Name : ",
-                                        // +'${_name}',
+                                        "Name : " +'${_name}',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -92,41 +115,40 @@ class _MenuState extends State<Menu> {
                                       padding: const EdgeInsets.only(
                                           top: 16, left: 16, right: 16),
                                       child: Text(
-                                        "Team : ",
-                                        // +'${_team}',
+                                        "Department : " +'${_department}',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      height: 40.0,
-                                      margin: EdgeInsets.only(top: 30),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 20.0),
-                                      child: RaisedButton.icon(
-                                        color: Colors.amberAccent,
-                                        onPressed: () {
-                                          setState(() {
-                                            // checkVersion();
-                                          });
-                                        },
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                        ),
-                                        icon: Icon(
-                                          Icons.system_update,
-                                          color: Colors.white70,
-                                        ),
-                                        label: Text(
-                                          "CheckforUpdate v",
-                                          // + _version,
-                                          style:
-                                              TextStyle(color: Colors.white70),
-                                        ),
-                                      ),
-                                    ),
+                                    // Container(
+                                    //   width: MediaQuery.of(context).size.width,
+                                    //   height: 40.0,
+                                    //   margin: EdgeInsets.only(top: 30),
+                                    //   padding: EdgeInsets.symmetric(
+                                    //       horizontal: 20.0),
+                                    //   child: RaisedButton.icon(
+                                    //     color: Colors.amberAccent,
+                                    //     onPressed: () {
+                                    //       setState(() {
+                                    //         // checkVersion();
+                                    //       });
+                                    //     },
+                                    //     shape: RoundedRectangleBorder(
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(5.0),
+                                    //     ),
+                                    //     icon: Icon(
+                                    //       Icons.system_update,
+                                    //       color: Colors.white70,
+                                    //     ),
+                                    //     label: Text(
+                                    //       "CheckforUpdate v",
+                                    //       // + _version,
+                                    //       style:
+                                    //           TextStyle(color: Colors.white70),
+                                    //     ),
+                                    //   ),
+                                    // ),
                                     Container(
                                       width: MediaQuery.of(context).size.width,
                                       height: 40.0,
