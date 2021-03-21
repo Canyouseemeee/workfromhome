@@ -88,12 +88,8 @@ class _DetailCheckinState extends State<DetailCheckin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Align(
-          alignment: Alignment.center,
-          child: Padding(
-              padding: EdgeInsets.only(right: 40),
-              child: Text(_loading ? 'Loading...' : "Detail")),
-        ),
+        centerTitle: true,
+        title: Text(_loading ? 'Loading...' : "Detail"),
         elevation: 6.0,
         shape: ContinuousRectangleBorder(
           borderRadius: const BorderRadius.only(
@@ -260,7 +256,10 @@ class _DetailCheckinState extends State<DetailCheckin> {
           ),
         ),
       )),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: checkin.file == null
+          ? Icon(Icons.photo, size: 120)
+          : (result == 'jpg')
+          ? Container() : FloatingActionButton(
         onPressed: () {
           setState(() {
             if (videoPlayerController.value.isPlaying) {

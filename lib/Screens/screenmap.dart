@@ -100,6 +100,7 @@ class _MapSampleState extends State<MapSample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text("Map"),
         backgroundColor: Colors.white,
         elevation: 6.0,

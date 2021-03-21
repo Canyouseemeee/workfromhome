@@ -255,7 +255,7 @@ class _CheckinworkState extends State<Checkinwork> {
         barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
-            title: Text("ท่านต้องการเช็คอินเข้างานใช่หหรือไม่"),
+            title: Text("ท่านต้องการเช็คอินเข้างานใช่หรือไม่"),
             actions: [
               FlatButton(
                 onPressed: () {
@@ -514,12 +514,8 @@ class _CheckinworkState extends State<Checkinwork> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Align(
-          alignment: Alignment.center,
-          child: Padding(
-              padding: EdgeInsets.only(right: 40),
-              child: Text(_loading ? 'Loading...' : "Checkin-Checkout")),
-        ),
+        centerTitle: true,
+        title: Text(_loading ? 'Loading...' : "Checkin-Checkout"),
         elevation: 6.0,
         shape: ContinuousRectangleBorder(
           borderRadius: const BorderRadius.only(
@@ -624,7 +620,7 @@ class _CheckinworkState extends State<Checkinwork> {
                                           height: 16,
                                         ),
                                         Text(
-                                            "Name : " +
+                                            "ชื่อ : " +
                                                 _checkin[index].name.toString(),
                                             // overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
@@ -634,13 +630,23 @@ class _CheckinworkState extends State<Checkinwork> {
                                           height: 16,
                                         ),
                                         Text(
-                                          "DateStart : " +
+                                          "วันที่ : " +
                                               df
-                                                  .formatInBuddhistCalendarThai(
-                                                      _checkin[index]
-                                                          .dateStart),
+                                                  .format(_checkin[index]
+                                                  .dateStart)
+                                                  .substring(0, 10),
                                           style: TextStyle(
-                                              color: Colors.black45,
+                                              color: Colors.black87,
+                                              fontWeight: FontWeight.w700),
+                                        ),
+                                        Text(
+                                          "เวลา : " +
+                                              df
+                                                  .format(_checkin[index]
+                                                  .dateStart)
+                                                  .substring(11, 19),
+                                          style: TextStyle(
+                                              color: Colors.black87,
                                               fontWeight: FontWeight.w700),
                                         ),
                                       ],
@@ -652,6 +658,9 @@ class _CheckinworkState extends State<Checkinwork> {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
+                                      SizedBox(
+                                        height: 16,
+                                      ),
                                       TextStatus(index),
                                       SizedBox(
                                         height: 16,
@@ -714,14 +723,32 @@ class _CheckinworkState extends State<Checkinwork> {
   TextDateEnd(int index) {
     if (_checkin[index].status == 1) {
       return Text(
-        "DateEnd : No Checkout",
+        "เวลาออก : ยังไม่ออกงาน",
         style: TextStyle(color: Colors.black45, fontWeight: FontWeight.w700),
       );
     } else if (_checkin[index].status == 2) {
       DateTime dte = DateTime.parse(_checkin[index].dateEnd);
-      return Text(
-        "DateEnd : " + df.formatInBuddhistCalendarThai(dte),
-        style: TextStyle(color: Colors.black45, fontWeight: FontWeight.w700),
+      return Column(
+        children: [
+          Text(
+            "วันที่ : " +
+                df
+                    .format(dte).toString()
+                    .substring(0, 10),
+            style: TextStyle(
+                color: Colors.black87,
+                fontWeight: FontWeight.w700),
+          ),
+          Text(
+            "เวลา : " +
+                df
+                    .format(dte).toString()
+                    .substring(11, 19),
+            style: TextStyle(
+                color: Colors.black87,
+                fontWeight: FontWeight.w700),
+          ),
+        ],
       );
     }
   }
@@ -729,12 +756,12 @@ class _CheckinworkState extends State<Checkinwork> {
   TextStatus(int index) {
     if (_checkin[index].status == 1) {
       return Text(
-        "Status : CheckIn",
+        "สถานะ : CheckIn",
         style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700),
       );
     } else if (_checkin[index].status == 2) {
       return Text(
-        "Status : CheckOut",
+        "สถานะ : CheckOut",
         style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700),
       );
     }
@@ -756,7 +783,7 @@ class _CheckinworkState extends State<Checkinwork> {
             borderRadius: BorderRadius.circular(30.0),
           ),
           child: Text(
-            "CheckOut",
+            "ออกงาน",
             style: TextStyle(color: Colors.white70),
           ),
         ),
@@ -786,7 +813,7 @@ class _CheckinworkState extends State<Checkinwork> {
             borderRadius: BorderRadius.circular(30.0),
           ),
           child: Text(
-            "Detail",
+            "รายละเอียด",
             style: TextStyle(color: Colors.white70),
           ),
         ),
@@ -807,7 +834,7 @@ class _CheckinworkState extends State<Checkinwork> {
             borderRadius: BorderRadius.circular(30.0),
           ),
           child: Text(
-            "Detail",
+            "รายละเอียด",
             style: TextStyle(color: Colors.white70),
           ),
         ),

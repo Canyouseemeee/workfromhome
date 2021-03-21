@@ -44,6 +44,7 @@ class _BodyState extends State<Body> {
         sharedPreferences.setString("latitude", jsonData['latitude']);
         sharedPreferences.setString("longitude", jsonData['longitude']);
         sharedPreferences.setString("userid", jsonData['userid']);
+        sharedPreferences.setString("usertype", jsonData['usertype']);
         // postloginlog(sharedPreferences.getString("username"),
         //     sharedPreferences.getString("token"));
         sharedPreferences.setString("department", jsonData['department']);
@@ -81,7 +82,7 @@ class _BodyState extends State<Body> {
       body: (_isLoading
           ? new Center(
               child: new CircularProgressIndicator(
-              backgroundColor: Colors.white70,
+              backgroundColor: Colors.pinkAccent,
             ))
           : Background(
               child: SingleChildScrollView(

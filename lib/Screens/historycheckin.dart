@@ -57,8 +57,11 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
 
   static Future<List<Checkin>> getHistoryBetweenCheckin(
       _startDate, _endDate) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var id = sharedPreferences.getString("userid");
     // print(DateFormat('yyyy-MM-dd').format(_startDate).toString());
     Map data = {
+      'userid': id,
       'fromdate': DateFormat('yyyy-MM-dd').format(_startDate).toString(),
       'todate': DateFormat('yyyy-MM-dd').format(_endDate).toString(),
     };
@@ -171,12 +174,8 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Align(
-          alignment: Alignment.center,
-          child: Padding(
-              padding: EdgeInsets.only(right: 40),
-              child: Text(_loading ? 'Loading...' : "History")),
-        ),
+        centerTitle: true,
+        title: Text(_loading ? 'Loading...' : "History"),
         elevation: 6.0,
         shape: ContinuousRectangleBorder(
           borderRadius: const BorderRadius.only(
@@ -188,78 +187,85 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
       ),
       backgroundColor: kPrimaryColor,
       body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                // mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
-                      "วันที่: ${DateFormat('dd/MM/yyyy').format(_startDate).toString()}"),
-                  Text(
-                      "ถึงวันที่: ${DateFormat('dd/MM/yyyy').format(_endDate).toString()}"),
-                  RaisedButton(
-                      child: Text("ค้นหา"),
-                      onPressed: () async {
-                        // getHistoryBetweenCheckin(_startDate,_endDate);
-                        if (mounted) {
-                          setState(() {
-                            selected = true;
-                            _loading = true;
-                            _timer = new Timer.periodic(Duration(seconds: 3),
-                                (timer) {
-                              getHistoryBetweenCheckin(_startDate, _endDate)
-                                  .then((historycin) {
-                                if (mounted)
-                                  setState(() {
-                                    _historycin = historycin;
-                                    // print(_historycin.length.toString());
-                                    if (_historycin.length == 0) {
-                                      // showAlertNullData();
-                                      _loading = false;
-                                    } else {
-                                      max = _historycin.length;
-                                      if (_historycin.length > 10) {
-                                        _historycin = List.generate(
-                                            10, (index) => _historycin[index]);
-                                      } else {
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text(
+                          "วันที่: ${DateFormat('dd/MM/yyyy').format(_startDate).toString()}"),
+                      Text(
+                          "ถึงวันที่: ${DateFormat('dd/MM/yyyy').format(_endDate).toString()}"),
+                      RaisedButton(
+                          child: Text("ค้นหา"),
+                          onPressed: () async {
+                            // getHistoryBetweenCheckin(_startDate,_endDate);
+                            if (mounted) {
+                              setState(() {
+                                selected = true;
+                                _loading = true;
+                                _timer = new Timer.periodic(
+                                    Duration(seconds: 3), (timer) {
+                                  getHistoryBetweenCheckin(_startDate, _endDate)
+                                      .then((historycin) {
+                                    if (mounted)
+                                      setState(() {
                                         _historycin = historycin;
-                                      }
-                                      min = _historycin.length;
-                                      _scrollController.addListener(() {
-                                        if (_scrollController.position.pixels ==
-                                            _scrollController
-                                                .position.maxScrollExtent) {
-                                          // getMoreData();
+                                        // print(_historycin.length.toString());
+                                        if (_historycin.length == 0) {
+                                          // showAlertNullData();
+                                          _loading = false;
+                                        } else {
+                                          max = _historycin.length;
+                                          if (_historycin.length > 10) {
+                                            _historycin = List.generate(10,
+                                                (index) => _historycin[index]);
+                                          } else {
+                                            _historycin = historycin;
+                                          }
+                                          min = _historycin.length;
+                                          _scrollController.addListener(() {
+                                            if (_scrollController
+                                                    .position.pixels ==
+                                                _scrollController
+                                                    .position.maxScrollExtent) {
+                                              // getMoreData();
+                                            }
+                                          });
+                                          _loading = false;
                                         }
                                       });
-                                      _loading = false;
-                                    }
                                   });
+                                });
                               });
-                            });
-                          });
-                        }
-                      }),
+                            }
+                          }),
+                    ],
+                  ),
+                  // SizedBox(height: 20,),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Expanded(
+                    child: ListView(
+                      children:[
+                        SelectedBetween(),
+                      ],
+                    ),
+                  ),
+                  // (_loading
+                  //     ? new Center(
+                  //         child: new CircularProgressIndicator(
+                  //         backgroundColor: Colors.pinkAccent,
+                  //       ))
+                  //     : _showJsondata()),
                 ],
               ),
-              // SizedBox(height: 20,),
-              SizedBox(
-                height: 20,
-              ),
-              SelectedBetween(),
-              // (_loading
-              //     ? new Center(
-              //         child: new CircularProgressIndicator(
-              //         backgroundColor: Colors.pinkAccent,
-              //       ))
-              //     : _showJsondata()),
-            ],
+            ),
           ),
-        ),
-      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
         heroTag: "btn",
@@ -383,8 +389,8 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
                                       Text(
                                         "วันที่ : " +
                                             df
-                                                .format(
-                                                DateTime.parse(_historycin[index].dateEnd))
+                                                .format(DateTime.parse(
+                                                    _historycin[index].dateEnd))
                                                 .substring(0, 10),
                                         style: TextStyle(
                                             color: Colors.black87,
@@ -393,8 +399,8 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
                                       Text(
                                         "เวลา : " +
                                             df
-                                                .format(
-                                                    DateTime.parse(_historycin[index].dateEnd))
+                                                .format(DateTime.parse(
+                                                    _historycin[index].dateEnd))
                                                 .substring(11, 19),
                                         style: TextStyle(
                                             color: Colors.black87,
@@ -417,8 +423,8 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              DetailCheckin(_historycin[index])),
+                                          builder: (context) => DetailCheckin(
+                                              _historycin[index])),
                                     ).then((value) {
                                       setState(() {
                                         _handleRefresh();
@@ -427,13 +433,11 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
                                   });
                                 },
                                 shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(30.0),
+                                  borderRadius: BorderRadius.circular(30.0),
                                 ),
                                 child: Text(
                                   "Detail",
-                                  style: TextStyle(
-                                      color: Colors.white70),
+                                  style: TextStyle(color: Colors.white70),
                                 ),
                               ),
                             ),

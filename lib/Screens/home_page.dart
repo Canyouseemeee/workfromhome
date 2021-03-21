@@ -27,14 +27,11 @@ class _HomeState extends State<Home> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+          centerTitle: true,
+          title:
               Text(
                 "WFH",
-              )
-            ],
-          ),
+              ),
           elevation: 6.0,
           shape: ContinuousRectangleBorder(
             borderRadius: const BorderRadius.only(
