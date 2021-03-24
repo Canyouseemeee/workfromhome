@@ -124,7 +124,7 @@ class _CheckinworkState extends State<Checkinwork> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text("OK"),
+                child: Text("ปิด"),
               ),
             ],
           );
@@ -225,10 +225,10 @@ class _CheckinworkState extends State<Checkinwork> {
         builder: (context) {
           return AlertDialog(
             title: Text(
-                "ท่านไม่ได้อยู่ระยะที่จะเช็คอินได้กรุณาไปยังจุดเช็คอินของท่านบริเวณใกล้ว่านี้"),
+                "ท่านไม่ได้อยู่ระยะที่จะเช็คอินได้กรุณาไปยังจุดเช็คอินของท่านบริเวณใกล้กว่านี้"),
             content: Text(
               "หมายเหตุ : ท่านสามารถเช็คอินนอกสถานที่ได้จากตำแหน่งที่อยู่ของท่านเอง",
-              style: TextStyle(color: Colors.black26),
+              style: TextStyle(color: Colors.black54),
             ),
             actions: [
               FlatButton(
@@ -382,7 +382,7 @@ class _CheckinworkState extends State<Checkinwork> {
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
-            title: Text('Checkin'),
+            title: Text('เช็คอินเข้างาน'),
             content: Center(
               child: Padding(
                 padding: EdgeInsets.all(32),
@@ -411,7 +411,7 @@ class _CheckinworkState extends State<Checkinwork> {
                   imageFile == null
                       ? Container()
                       : new FlatButton(
-                          child: new Text('SAVE'),
+                          child: new Text('บันทึก'),
                           onPressed: () {
                             setState(() {
                               // if (_formKey.currentState.validate()) {
@@ -425,14 +425,14 @@ class _CheckinworkState extends State<Checkinwork> {
                           },
                         ),
                   new FlatButton(
-                    child: new Text('Chosse Image or Video'),
+                    child: new Text('เลือก รูป หรือ วีดีโอ'),
                     onPressed: () {
                       Navigator.pop(context);
                       showAlertCameraorVideo(context);
                     },
                   ),
                   new FlatButton(
-                    child: new Text('Close'),
+                    child: new Text('ปิด'),
                     onPressed: () {
                       imageFile = null;
                       Navigator.pop(context);
@@ -465,7 +465,7 @@ class _CheckinworkState extends State<Checkinwork> {
                   capture(MediaSource.image);
                   // _showDialog(context);
                 },
-                child: Text("Camera"),
+                child: Text("กล้อง"),
               ),
               FlatButton(
                 onPressed: () {
@@ -476,7 +476,7 @@ class _CheckinworkState extends State<Checkinwork> {
                   capture(MediaSource.video);
                   // _showDialog(context);
                 },
-                child: Text("Video"),
+                child: Text("วีดีโอ"),
               ),
             ],
           );
@@ -515,7 +515,7 @@ class _CheckinworkState extends State<Checkinwork> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(_loading ? 'Loading...' : "Checkin-Checkout"),
+        title: Text(_loading ? 'กำลังโหลด...' : "เข้างาน-ออกงาน"),
         elevation: 6.0,
         shape: ContinuousRectangleBorder(
           borderRadius: const BorderRadius.only(
@@ -576,7 +576,7 @@ class _CheckinworkState extends State<Checkinwork> {
             if (_checkin.length == 0) {
               return Center(
                 child: Text(
-                  "No Result",
+                  "ไม่มีข้อมูล",
                   style: TextStyle(color: Colors.white70, fontSize: 20),
                 ),
               );
@@ -599,75 +599,74 @@ class _CheckinworkState extends State<Checkinwork> {
             return Card(
               child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(5.0),
+                  padding: const EdgeInsets.all(8),
                   child: Stack(
                     children: <Widget>[
                       Positioned.fill(
                         child: Column(
                           children: <Widget>[
-                            Row(
+                            Column(
                               children: <Widget>[
-                                Expanded(
-                                  flex: 5,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 20),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        SizedBox(
-                                          height: 16,
-                                        ),
-                                        Text(
+                                Row(
+                                  // mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      SizedBox(
+                                        height: 16,
+                                      ),
+                                      Text(
                                             "ชื่อ : " +
                                                 _checkin[index].name.toString(),
                                             // overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
+                                                fontSize: 16,
                                                 color: Colors.black87,
                                                 fontWeight: FontWeight.w700)),
-                                        SizedBox(
-                                          height: 16,
-                                        ),
+                                      SizedBox(
+                                        width: 127,
+                                      ),
+                                      TextStatus(index),
+                                    ],
+                                  ),
+                                Row(
+                                  // mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 70,
+                                    ),
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
                                         Text(
                                           "วันที่ : " +
                                               df
-                                                  .format(_checkin[index]
-                                                  .dateStart)
+                                                  .format(
+                                                      _checkin[index].dateStart)
                                                   .substring(0, 10),
                                           style: TextStyle(
+                                              fontSize: 16,
                                               color: Colors.black87,
                                               fontWeight: FontWeight.w700),
                                         ),
                                         Text(
                                           "เวลา : " +
                                               df
-                                                  .format(_checkin[index]
-                                                  .dateStart)
+                                                  .format(
+                                                      _checkin[index].dateStart)
                                                   .substring(11, 19),
                                           style: TextStyle(
+                                              fontSize: 16,
                                               color: Colors.black87,
                                               fontWeight: FontWeight.w700),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 6,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      SizedBox(
-                                        height: 16,
-                                      ),
-                                      TextStatus(index),
-                                      SizedBox(
-                                        height: 16,
-                                      ),
-                                      TextDateEnd(index),
-                                    ],
-                                  ),
+                                    SizedBox(
+                                      width: 70,
+                                    ),
+                                    TextDateEnd(index),
+                                  ],
                                 ),
                               ],
                             ),
@@ -724,29 +723,24 @@ class _CheckinworkState extends State<Checkinwork> {
     if (_checkin[index].status == 1) {
       return Text(
         "เวลาออก : ยังไม่ออกงาน",
-        style: TextStyle(color: Colors.black45, fontWeight: FontWeight.w700),
+        style: TextStyle(fontSize: 16,color: Colors.black45, fontWeight: FontWeight.w700),
       );
     } else if (_checkin[index].status == 2) {
       DateTime dte = DateTime.parse(_checkin[index].dateEnd);
       return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment:
+        CrossAxisAlignment.start,
         children: [
           Text(
-            "วันที่ : " +
-                df
-                    .format(dte).toString()
-                    .substring(0, 10),
-            style: TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w700),
+            "วันที่ : " + df.format(dte).toString().substring(0, 10),
+            style:
+                TextStyle(fontSize: 16,color: Colors.black87, fontWeight: FontWeight.w700),
           ),
           Text(
-            "เวลา : " +
-                df
-                    .format(dte).toString()
-                    .substring(11, 19),
-            style: TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w700),
+            "เวลา : " + df.format(dte).toString().substring(11, 19),
+            style:
+                TextStyle(fontSize: 16,color: Colors.black87, fontWeight: FontWeight.w700),
           ),
         ],
       );
@@ -756,13 +750,13 @@ class _CheckinworkState extends State<Checkinwork> {
   TextStatus(int index) {
     if (_checkin[index].status == 1) {
       return Text(
-        "สถานะ : CheckIn",
-        style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700),
+        "สถานะ : เข้างาน",
+        style: TextStyle(fontSize: 16,color: Colors.black87, fontWeight: FontWeight.w700),
       );
     } else if (_checkin[index].status == 2) {
       return Text(
-        "สถานะ : CheckOut",
-        style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700),
+        "สถานะ : ออกงาน",
+        style: TextStyle(fontSize: 16,color: Colors.black87, fontWeight: FontWeight.w700),
       );
     }
   }
@@ -770,9 +764,9 @@ class _CheckinworkState extends State<Checkinwork> {
   showButton(int index) {
     if (_checkin[index].status == 1) {
       return Padding(
-        padding: EdgeInsets.all(4),
+        padding: EdgeInsets.all(2),
         child: RaisedButton(
-          color: Colors.red,
+          color: Colors.green,
           onPressed: () {
             setState(() {
               // showAlertUpdate(news);
@@ -790,9 +784,9 @@ class _CheckinworkState extends State<Checkinwork> {
       );
     } else if (_checkin[index].status == 2) {
       return Padding(
-        padding: EdgeInsets.all(4),
+        padding: EdgeInsets.all(2),
         child: RaisedButton(
-          color: Colors.blueGrey,
+          color: Colors.green,
           onPressed: () {
             setState(() {
               // _showDetail(index);
@@ -822,7 +816,7 @@ class _CheckinworkState extends State<Checkinwork> {
       return Padding(
         padding: EdgeInsets.all(4),
         child: RaisedButton(
-          color: Colors.blueGrey,
+          color: Colors.green,
           onPressed: () {
             setState(() {
               // _showDetail(index);
@@ -841,5 +835,4 @@ class _CheckinworkState extends State<Checkinwork> {
       );
     }
   }
-
 }

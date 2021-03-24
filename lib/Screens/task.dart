@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:workfromhome/Other/constants.dart';
 import 'package:workfromhome/Screens/addtask.dart';
+import 'package:workfromhome/Screens/historyassigntask.dart';
 import 'package:workfromhome/Screens/manageassigntask.dart';
 import 'package:workfromhome/Screens/managetask.dart';
 
@@ -80,7 +81,7 @@ class _TaskState extends State<Task> {
                           width: MediaQuery.of(context).size.width * 0.8,
                           height: MediaQuery.of(context).size.height * 0.07,
                           child: RaisedButton(
-                            color: Colors.green,
+                            color: Color(0xFFFF9C68),
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -95,7 +96,7 @@ class _TaskState extends State<Task> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0),
                             ),
-                            child: Text("งานของท่าน"),
+                            child: Text("งานของท่าน",style: TextStyle(fontSize: 16),),
                           ),
                         ),
                         SizedBox(
@@ -105,22 +106,22 @@ class _TaskState extends State<Task> {
                           width: MediaQuery.of(context).size.width * 0.8,
                           height: MediaQuery.of(context).size.height * 0.07,
                           child: RaisedButton(
-                            color: Colors.blue,
+                            color: Color(0xFFFF9C68),
                             onPressed: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => HistoryCheckin()),
-                              // ).then((value) {
-                              //   setState(() {
-                              //     _handleRefresh();
-                              //   });
-                              // });
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HistoryAssignTask()),
+                              ).then((value) {
+                                setState(() {
+                                  _handleRefresh();
+                                });
+                              });
                             },
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0),
                             ),
-                            child: Text("ประวัติการส่งงาน"),
+                            child: Text("ประวัติการส่งงาน",style: TextStyle(fontSize: 16),),
                           ),
                         ),
                       ],
@@ -138,7 +139,7 @@ class _TaskState extends State<Task> {
         width: MediaQuery.of(context).size.width * 0.8,
         height: MediaQuery.of(context).size.height * 0.07,
         child: RaisedButton(
-          color: Colors.white38,
+          color: Color(0xFFFF9C68),
           onPressed: () {
             Navigator.push(
               context,
@@ -153,7 +154,7 @@ class _TaskState extends State<Task> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
-          child: Text("จัดการข้อมูลงาน"),
+          child: Text("จัดการข้อมูลงาน",style: TextStyle(fontSize: 16),),
         ),
       );
     }else if(usertype == 'SUPERUSER'){

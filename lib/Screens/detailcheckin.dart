@@ -89,7 +89,7 @@ class _DetailCheckinState extends State<DetailCheckin> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(_loading ? 'Loading...' : "Detail"),
+        title: Text(_loading ? 'กำลังโหลด...' : "รายละเอียดเข้างาน-ออกงาน"),
         elevation: 6.0,
         shape: ContinuousRectangleBorder(
           borderRadius: const BorderRadius.only(
@@ -129,6 +129,7 @@ class _DetailCheckinState extends State<DetailCheckin> {
                                     child: Text(
                                       "เข้างาน",
                                       style: TextStyle(
+                                          fontSize: 16,
                                           color: Colors.black87,
                                           fontWeight: FontWeight.w700),
                                     ),
@@ -143,6 +144,7 @@ class _DetailCheckinState extends State<DetailCheckin> {
                                             checkin
                                                 .dateStart).substring(0,10),
                                     style: TextStyle(
+                                        fontSize: 16,
                                         color: Colors.black87,
                                         fontWeight: FontWeight.w700),
                                   ),
@@ -153,6 +155,7 @@ class _DetailCheckinState extends State<DetailCheckin> {
                                             checkin
                                                 .dateStart).substring(11,19),
                                     style: TextStyle(
+                                        fontSize: 16,
                                         color: Colors.black87,
                                         fontWeight: FontWeight.w700),
                                   ),
@@ -172,6 +175,7 @@ class _DetailCheckinState extends State<DetailCheckin> {
                                   child: Text(
                                     "ออกงาน",
                                     style: TextStyle(
+                                        fontSize: 16,
                                         color: Colors.black87,
                                         fontWeight: FontWeight.w700),
                                   ),
@@ -185,6 +189,7 @@ class _DetailCheckinState extends State<DetailCheckin> {
                                           .format(
                                           DateTime.parse(checkin.dateEnd)).substring(0,10),
                                   style: TextStyle(
+                                      fontSize: 16,
                                       color: Colors.black87,
                                       fontWeight: FontWeight.w700),
                                 ),
@@ -194,6 +199,7 @@ class _DetailCheckinState extends State<DetailCheckin> {
                                           .format(
                                           DateTime.parse(checkin.dateEnd)).substring(11,19),
                                   style: TextStyle(
+                                      fontSize: 16,
                                       color: Colors.black87,
                                       fontWeight: FontWeight.w700),
                                 ),
@@ -233,6 +239,11 @@ class _DetailCheckinState extends State<DetailCheckin> {
                           },
                         ),
                       ),
+                      Text("รูปภาพหรือวีดีโอ", style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w700),
+                      ),
                       SizedBox(height: 16,),
                       Container(
                         height: 250,
@@ -246,6 +257,11 @@ class _DetailCheckinState extends State<DetailCheckin> {
                           markers: _makers,
                           onCameraMove: _onCameraMove,
                         ),
+                      ),
+                      Text("ตำแหน่งที่เช็คอิน", style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w700),
                       ),
                     ],
                   ),

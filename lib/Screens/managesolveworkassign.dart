@@ -1,21 +1,25 @@
 import 'dart:async';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workfromhome/Models/Solvework.dart';
 import 'package:workfromhome/Models/Task.dart';
 import 'package:workfromhome/Other/constants.dart';
-import 'package:workfromhome/Other/services/Jsondata.dart';
-import 'package:workfromhome/Screens/addtask.dart';
-import 'package:workfromhome/Screens/detailtask.dart';
-import 'package:workfromhome/Screens/edittask.dart';
+import 'package:workfromhome/Screens/detailsolvework.dart';
 
-class ManageTask extends StatefulWidget {
+class ManageSolveworkassign extends StatefulWidget {
+  Task task;
+  ManageSolveworkassign(this.task);
   @override
-  _ManageTaskState createState() => _ManageTaskState();
+  _ManageSolveworkassignState createState() => _ManageSolveworkassignState(task);
 }
 
-class _ManageTaskState extends State<ManageTask> {
-  List<Task> _task;
+class _ManageSolveworkassignState extends State<ManageSolveworkassign> {
+  Task task;
+  _ManageSolveworkassignState(this.task);
+  List<Solvework> _solvework;
   bool taskLoading = true;
   var max;
   var min;
@@ -26,27 +30,56 @@ class _ManageTaskState extends State<ManageTask> {
   int _currentMax = 10;
   String cid;
   DateTime time = DateTime.now();
+  TextEditingController EditSub = TextEditingController();
+  TextEditingController EditDue = TextEditingController();
+  DateTime newDateTime;
+  var timePicked;
+  var due;
+
+  static Future<List<Solvework>> getSolvework(String taskid) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    Map data = {'taskid': taskid};
+    var jsonData = null;
+    const String url = Apiurl+"/api/getsolvework";
+    try {
+      final response = await http.post(url, body: data);
+      if (response.statusCode == 200) {
+        if (response.body.isNotEmpty) {
+          // print(taskid);
+          final List<Solvework> slovework = solveworkFromJson(response.body);
+          return slovework;
+        }
+      } else {
+        // print(response);
+        return List<Solvework>();
+      }
+    } catch (e) {
+      // print("e2");
+      return List<Solvework>();
+    }
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _loading = true;
-    Jsondata.getTask().then((checkins) {
+    String tid = task.taskid.toString();
+    getSolvework(tid).then((solvework) {
       setState(() {
-        _task = checkins;
-        // print(_checkin.length.toString());
-        if (_task.length == 0) {
+        _solvework = solvework;
+        // print(_solvework.length.toString());
+        if (_solvework.length == 0) {
           // showAlertNullData();
           _loading = false;
         } else {
-          max = _task.length;
-          if (_task.length > 10) {
-            _task = List.generate(10, (index) => _task[index]);
+          max = _solvework.length;
+          if (_solvework.length > 10) {
+            _solvework = List.generate(10, (index) => _solvework[index]);
           } else {
-            _task = checkins;
+            _solvework = solvework;
           }
-          min = _task.length;
+          min = _solvework.length;
           _scrollController.addListener(() {
             if (_scrollController.position.pixels ==
                 _scrollController.position.maxScrollExtent) {
@@ -62,19 +95,19 @@ class _ManageTaskState extends State<ManageTask> {
   getMoreData() {
     if (min == 10) {
       for (int i = _currentMax; i < max - 1; i++) {
-        Jsondata.getTask().then((checkins) {
+        getSolvework(task.taskid.toString()).then((solvework) {
           setState(() {
-            _task = checkins;
-            _task.add(_task[i]);
-            _task.length = max;
+            _solvework = solvework;
+            _solvework.add(_solvework[i]);
+            _solvework.length = max;
             _loading = false;
-            if (_task.isNotEmpty) {
-              return _task.elementAt(0);
+            if (_solvework.isNotEmpty) {
+              return _solvework.elementAt(0);
             }
           });
         });
       }
-      if (_task.length == max) {
+      if (_solvework.length == max) {
         showAlertLimitData();
       }
     }
@@ -105,7 +138,7 @@ class _ManageTaskState extends State<ManageTask> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(_loading ? 'กำลังโหลด...' : "ภาระงาน"),
+        title: Text(_loading ? 'กำลังโหลด...' : "ภาระงานที่ให้แก้"),
         elevation: 6.0,
         shape: ContinuousRectangleBorder(
           borderRadius: const BorderRadius.only(
@@ -114,24 +147,6 @@ class _ManageTaskState extends State<ManageTask> {
           ),
         ),
         backgroundColor: Colors.white,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.add,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddTask()),
-              ).then((value) {
-                setState(() {
-                  _handleRefresh();
-                });
-              });
-            },
-          ),
-        ],
       ),
       body: _loading
           ? Center(child: CircularProgressIndicator(backgroundColor: Colors.pinkAccent,))
@@ -142,9 +157,9 @@ class _ManageTaskState extends State<ManageTask> {
 
   _productListView() {
     return ListView.builder(
-      itemCount: _task.length,
+      itemCount: _solvework.length,
       itemBuilder: (context, index) {
-        if (_task.length == 0) {
+        if (_solvework.length == 0) {
           return Center(
             child: Text(
               "ไม่มีข้อมูล",
@@ -152,20 +167,20 @@ class _ManageTaskState extends State<ManageTask> {
             ),
           );
         } else {
-          if (index == _task.length &&
-              _task.length > 10 &&
+          if (index == _solvework.length &&
+              _solvework.length > 10 &&
               index > 10) {
             return Center(
                 child: CircularProgressIndicator(
                   backgroundColor: Colors.white70,
                 ));
-          } else if (index == _task.length &&
-              _task.length <= 10 &&
+          } else if (index == _solvework.length &&
+              _solvework.length <= 10 &&
               index <= 10) {
             return Center(child: Text(""));
           }
         }
-        Task task = _task[index];
+        Solvework solvework = _solvework[index];
         return Padding(
           padding: EdgeInsets.all(3.0),
           child: Card(
@@ -174,14 +189,16 @@ class _ManageTaskState extends State<ManageTask> {
                 Icons.assignment_rounded,
                 color: Colors.lightGreen,
               ),
-              title: Text("หัวเรื่อง: " + task.subject,
+              title: Text("รายละเอียดที่ให้แก้งาน" + solvework.subject,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Text("[ รายละเอียด: " +
-                  task.description +
-                  " ] \n[ ให้งานกับพนักงาน: " +
-                  task.assignment +
-                  " ]",style: TextStyle(fontSize: 16),),
+                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
+              subtitle: Text(
+                  "[ วันนที่ส่งงาน: " +
+                      df.format(task.dueDate).substring(0, 10) +
+                      " ] \n"+ "[ เวลาส่งงาน: " +
+                      df.format(task.dueDate).substring(11, 19) +" ] \n[ ให้กับพนักงาน: " +
+                      solvework.assignment +
+                      " ]",style: TextStyle(fontSize: 16),),
               trailing: Wrap(
                 children: <Widget>[
                   IconButton(
@@ -190,21 +207,7 @@ class _ManageTaskState extends State<ManageTask> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => DetailTask(_task[index])),
-                      ).then((value) {
-                        setState(() {
-                          _handleRefresh();
-                        });
-                      });
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EditTask(task)),
+                            builder: (context) => DetailSolvework(_solvework[index])),
                       ).then((value) {
                         setState(() {
                           _handleRefresh();
@@ -228,12 +231,12 @@ class _ManageTaskState extends State<ManageTask> {
       completer.complete();
       setState(() {
         _loading = false;
-        Jsondata.getTask().then((checkins) {
+        getSolvework(task.taskid.toString()).then((checkins) {
           setState(() {
-            _task = checkins;
-            max = _task.length;
+            _solvework = checkins;
+            max = _solvework.length;
             // _new = List.generate(10, (index) => _new[index]);
-            min = _task.length;
+            min = _solvework.length;
             _scrollController.addListener(() {
               if (_scrollController.position.pixels ==
                   _scrollController.position.maxScrollExtent) {
@@ -248,5 +251,4 @@ class _ManageTaskState extends State<ManageTask> {
 
     return null;
   }
-
 }

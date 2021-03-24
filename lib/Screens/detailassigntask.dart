@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
@@ -10,7 +11,9 @@ import 'package:workfromhome/Models/Task.dart';
 import 'package:workfromhome/Other/constants.dart';
 import 'package:workfromhome/Other/services/Jsondata.dart';
 import 'package:buddhist_datetime_dateformat/buddhist_datetime_dateformat.dart';
-
+import 'package:workfromhome/Screens/managesolvework.dart';
+import 'package:http/http.dart' as http;
+import 'package:workfromhome/Screens/managesolveworkassign.dart';
 
 class DetailAssignTask extends StatefulWidget {
   Task task;
@@ -27,18 +30,49 @@ class _DetailAssignTaskState extends State<DetailAssignTask> {
   DateTime time = DateTime.now();
   final df = new DateFormat('dd/MM/yyyy HH:mm a');
   File localfile;
+  int count;
+  String taskid;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _loading = false;
+    _loading = true;
     Timer(Duration(seconds: 1), () {
       if (!_disposed)
         setState(() {
           time = time.add(Duration(seconds: -1));
         });
     });
+    taskid = task.taskid.toString();
+    postCountResolve(taskid);
+  }
+
+  postCountResolve(String tid) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var id;
+    var jsonData = null;
+    setState(() {
+      id = sharedPreferences.getString("userid");
+    });
+    if (sharedPreferences.getString("token") != null) {
+      Map data = {
+        'taskid': tid,
+      };
+      var response = await http.post(Apiurl + "/api/countsolvework", body: data);
+      if (response.statusCode == 200) {
+        jsonData = json.decode(response.body);
+        if (jsonData != null) {
+          if(mounted) setState(() {
+            _loading = false;
+            count = jsonData;
+          });
+
+        }
+      } else {
+        print(response.body);
+      }
+    }
   }
 
   void _openFileExplorer() async {
@@ -56,24 +90,6 @@ class _DetailAssignTaskState extends State<DetailAssignTask> {
     setState(() {
       id = sharedPreferences.getString("userid");
     });
-    // var id;
-    // setState(() {
-    //   id = sharedPreferences.getInt("userid").toString();
-    // });
-    // if (sharedPreferences.getString("token") != null) {
-    //   Map data = {
-    //     'userid': id,
-    //   };
-    //   var jsonData = null;
-    //   var response = await http
-    //       .post(Apiurl+"/api/checkin", body: data);
-    //   if (response.statusCode == 200) {
-    //     jsonData = json.decode(response.body);
-    //     if (jsonData != null) {}
-    //   } else {
-    //     print(response.body);
-    //   }
-    // }
     if (file != null) {
       String fileName = file.path.split('/').last.replaceAll(" ", "_");
       if (sharedPreferences.getString("token") != null) {
@@ -121,6 +137,7 @@ class _DetailAssignTaskState extends State<DetailAssignTask> {
                 onPressed: () {
                   Navigator.pop(context);
                   _handleRefresh();
+                  Navigator.pop(context);
                 },
                 child: Text("ปิด"),
               ),
@@ -159,7 +176,7 @@ class _DetailAssignTaskState extends State<DetailAssignTask> {
                   localfile == null
                       ? Container()
                       : new FlatButton(
-                    child: new Text('SAVE'),
+                    child: new Text('บันทึก'),
                     onPressed: () {
                       setState(() {
                         // if (_formKey.currentState.validate()) {
@@ -174,14 +191,14 @@ class _DetailAssignTaskState extends State<DetailAssignTask> {
                     },
                   ),
                   new FlatButton(
-                    child: new Text('Chosse File'),
+                    child: new Text('เลือกไฟล์'),
                     onPressed: () {
                       Navigator.pop(context);
                       _openFileExplorer();
                     },
                   ),
                   new FlatButton(
-                    child: new Text('Close'),
+                    child: new Text('ปิด'),
                     onPressed: () {
                       localfile = null;
                       Navigator.pop(context);
@@ -201,7 +218,7 @@ class _DetailAssignTaskState extends State<DetailAssignTask> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(_loading ? 'Loading...' : "Detail"),
+        title: Text(_loading ? 'กำลังโหลด...' : "รายละเอียดภาระงาน"),
         backgroundColor: Colors.white,
         elevation: 6.0,
         shape: ContinuousRectangleBorder(
@@ -225,178 +242,109 @@ class _DetailAssignTaskState extends State<DetailAssignTask> {
 
   Widget _titleSection(context) => Padding(
     padding: EdgeInsets.all(0),
-    child: Card(
-      child: Padding(
-        padding: EdgeInsets.only(left: 8),
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 16,
-            ),
-            Row(
+    child: Column(
+      children:[
+        Card(
+          child: Padding(
+            padding: EdgeInsets.only(left: 8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 150),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Taskid : " + task.taskid.toString(),
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
+                SizedBox(
+                  height: 16,
+                ),
+                Center(
+                  child: Text(
+                    "ภาระงาน : " + task.taskid.toString(),
+                    style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
                   ),
                 ),
-              ],
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Divider(
-              thickness: 1,
-              color: Colors.grey,
-              endIndent: 10,
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Subject = " + task.subject,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 14),
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Text(
-                        "Description = " + task.description,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 14),
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                    ],
-                  ),
+                SizedBox(
+                  height: 16,
                 ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(
-                        height: 16,
-                      ),
-                      TextStatus(),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Text(
-                        "Department = " + task.dmname,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 14),
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                    ],
-                  ),
+                Text(
+                  "หัวเรื่อง : " + task.subject,
+                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
                 ),
-              ],
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Divider(
-              thickness: 1,
-              color: Colors.grey,
-              endIndent: 10,
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "CreateTask = " + task.createtask,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 14),
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Text(
-                        "วันที่ให้งาน : " +
-                            df
-                                .format(
-                                task.assignDate)
-                                .substring(0, 10),
-                        style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      Text(
-                        "เวลาให้งาน : " +
-                            df
-                                .format(
-                                task.assignDate)
-                                .substring(11, 19),
-                        style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                    ],
-                  ),
+                SizedBox(
+                  height: 16,
                 ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Text(
-                        "AssignTask = " + task.name,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 14),
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Text(
-                        "วันที่ส่งงาน : " +
-                            df
-                                .format(
-                                task.dueDate)
-                                .substring(0, 10),
-                        style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      Text(
-                        "เวลาส่งงาน : " +
-                            df
-                                .format(
-                                task.dueDate)
-                                .substring(11, 19),
-                        style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                    ],
-                  ),
+                Text(
+                  "รายละเอียด : " + task.description,
+                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
                 ),
-              ],
-            ),
-            ButtonStatus(),
+                SizedBox(
+                  height: 16,
+                ),
+                TextStatus(),
+                SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  "แผนก : " + task.dmname,
+                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  "หัวหน้าที่สร้างงาน : " + task.createtask,
+                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  "วันที่ให้งาน : " +
+                      df.format(task.assignDate).substring(0, 10),
+                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  "เวลาให้งาน : " +
+                      df.format(task.assignDate).substring(11, 19),
+                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  "ให้งานกับพนักงาน : " + task.name,
+                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  "วันที่ส่งงาน : " + df.format(task.dueDate).substring(0, 10),
+                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
 
-          ],
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  "เวลาส่งงาน : " + df.format(task.dueDate).substring(11, 19),
+                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
+
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
+        Row(
+          children: [
+            ButtonCountsolve(),
+            ButtonStatus(),
+          ],
+        )
+      ],
     ),
   );
 
@@ -427,93 +375,124 @@ class _DetailAssignTaskState extends State<DetailAssignTask> {
   TextStatus() {
     if (task.statustaskid == 1) {
       return Text(
-        "Status : งานใหม่",
+        "สถานะ : งานใหม่",
         style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700),
       );
     } else if (task.statustaskid == 2) {
       return Text(
-        "Status : กำลังดำเนินการ",
+        "สถานะ : กำลังดำเนินการ",
         style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700),
       );
     }else if (task.statustaskid == 3) {
       return Text(
-        "Status : ปิดงานแล้ว",
+        "สถานะ : ปิดงานแล้ว",
         style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700),
       );
     }
   }
 
-  ButtonStatus(){
-    if(task.statustaskid == 1){
-      return Center(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: 50.0,
-          margin: EdgeInsets.all(10),
-          padding: EdgeInsets.symmetric(horizontal: 80.0),
-          child: RaisedButton(
-            color: Colors.pink,
-            onPressed: () {
+  ButtonCountsolve() {
+    if (count != 0) {
+      return Container(
+        // width: MediaQuery.of(context).size.width - 100,
+        height: 50.0,
+        margin: EdgeInsets.all(5),
+        // padding: EdgeInsets.symmetric(horizontal: 90.0),
+        child: RaisedButton(
+          color: Colors.green,
+          onPressed: () async {
+            // _showDialog(context);
+            // _dowloadFile(url);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ManageSolveworkassign(task)),
+            ).then((value) {
               setState(() {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //       builder: (context) =>
-                //           Comment(task.issuesid.toString())),
-                // ).then((value) {
-                //   setState(() {
-                //     _handleRefresh();
-                //
-                //   });
-                // });
-                // _openFileExplorer();
-                _showDialog(context);
+                _handleRefresh();
               });
-            },
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
-            ),
-            child: Text(
-              "ส่งงาน",
-              style: TextStyle(color: Colors.white70),
-            ),
+            });
+          },
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          child: Text(
+            "ดูงานที่แก้ไข",
+            style: TextStyle(fontSize: 16,color: Colors.white),
           ),
         ),
       );
-    }else if(task.statustaskid == 2){
+    } else {
+      return Container();
+    }
+  }
+
+  ButtonStatus(){
+    if(task.statustaskid == 1 && count == 0){
       return Center(
         child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: 50.0,
-          margin: EdgeInsets.all(10),
-          padding: EdgeInsets.symmetric(horizontal: 80.0),
-          child: RaisedButton(
-            color: Colors.pink,
-            onPressed: () {
-              setState(() {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //       builder: (context) =>
-                //           Comment(task.issuesid.toString())),
-                // ).then((value) {
-                //   setState(() {
-                //     _handleRefresh();
-                //
-                //   });
-                // });
-                // _openFileExplorer();
-                _showDialog(context);
-              });
-            },
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
+            height: 50.0,
+            margin: EdgeInsets.all(5),
+            child: RaisedButton(
+              color: Colors.green,
+              onPressed: () {
+                setState(() {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (context) =>
+                  //           Comment(task.issuesid.toString())),
+                  // ).then((value) {
+                  //   setState(() {
+                  //     _handleRefresh();
+                  //
+                  //   });
+                  // });
+                  // _openFileExplorer();
+                  _showDialog(context);
+                });
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              child: Text(
+                "ส่งงาน",
+                style: TextStyle(fontSize: 16,color: Colors.white),
+              ),
             ),
-            child: Text(
-              "ส่งงาน",
-              style: TextStyle(color: Colors.white70),
+        ),
+      );
+    }else if(task.statustaskid == 2 && count == 0){
+      return Center(
+        child: Container(
+            height: 50.0,
+            margin: EdgeInsets.all(5),
+            child: RaisedButton(
+              color: Colors.green,
+              onPressed: () {
+                setState(() {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (context) =>
+                  //           Comment(task.issuesid.toString())),
+                  // ).then((value) {
+                  //   setState(() {
+                  //     _handleRefresh();
+                  //
+                  //   });
+                  // });
+                  // _openFileExplorer();
+                  _showDialog(context);
+                });
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              child: Text(
+                "ส่งงาน",
+                style: TextStyle(fontSize: 16,color: Colors.white),
+              ),
             ),
-          ),
         ),
       );
     }else{

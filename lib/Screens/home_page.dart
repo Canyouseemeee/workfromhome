@@ -63,7 +63,7 @@ class _HomeState extends State<Home> {
                           width: MediaQuery.of(context).size.width * 0.8,
                           height: MediaQuery.of(context).size.height * 0.07,
                           child: RaisedButton(
-                            color: Colors.green,
+                            color: Color(0xFFFF9C68),
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -78,7 +78,7 @@ class _HomeState extends State<Home> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0),
                             ),
-                            child: Text("เช็คอินเข้างาน"),
+                            child: Text("เช็คอินเข้างาน",style: TextStyle(fontSize: 16),),
                           ),
                         ),
                         SizedBox(
@@ -88,7 +88,7 @@ class _HomeState extends State<Home> {
                           width: MediaQuery.of(context).size.width * 0.8,
                           height: MediaQuery.of(context).size.height * 0.07,
                           child: RaisedButton(
-                            color: Colors.blue,
+                            color: Color(0xFFFF9C68),
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -103,7 +103,7 @@ class _HomeState extends State<Home> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0),
                             ),
-                            child: Text("ดูประวัติเช็คอินเข้างาน"),
+                            child: Text("ดูประวัติเช็คอินเข้างาน",style: TextStyle(fontSize: 16),),
                           ),
                         ),
                       ],

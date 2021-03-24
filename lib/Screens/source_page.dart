@@ -9,14 +9,14 @@ class SourcePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Select Source'),
+        title: Text('เลือก'),
       ),
       body: ListView(
         children: [
           ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             title: Text(
-              "Camera",
+              "กล้อง",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             leading: Icon(Icons.camera_alt, size: 28, color: Colors.black),

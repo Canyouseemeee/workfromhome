@@ -38,6 +38,8 @@ class _AddTaskState extends State<AddTask> {
   List<Department> _department;
   List<DropdownMenuItem<Department>> _dropdownMenuDepartmentItems;
   Department _selectedDepartment;
+  bool disabledropdown = true;
+
 
   static Future<List<Users>> getUsers(String _myState) async {
     const String url = Apiurl + "/api/getuser";
@@ -142,7 +144,7 @@ class _AddTaskState extends State<AddTask> {
           setState(() {
             _loading = false;
           });
-          Toast.show("Add Task Successful.", context,
+          Toast.show("เพิ่มภาระงานสำเร็จ", context,
               gravity: Toast.CENTER, duration: 2);
           Navigator.pop(context, true);
           // Navigator.of(context).pushAndRemoveUntil(
@@ -161,7 +163,7 @@ class _AddTaskState extends State<AddTask> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(_loading ? 'Loading...' : "Task [Add]"),
+        title: Text(_loading ? 'กำลังโหลด...' : "เพิ่มภาระงาน"),
         elevation: 6.0,
         shape: ContinuousRectangleBorder(
           borderRadius: const BorderRadius.only(
@@ -190,7 +192,7 @@ class _AddTaskState extends State<AddTask> {
           child: ListView(
             children: <Widget>[
               Row(children: [
-                Text("SUBJECT: "),
+                Text("หัวเรื่อง: ",style: TextStyle(fontSize: 16),),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
@@ -200,13 +202,13 @@ class _AddTaskState extends State<AddTask> {
                         controller: taskSub,
                         decoration: InputDecoration(
                           // labelText: "Subject",
-                          hintText: "Enter Subject",
+                          hintText: "กรอกข้อมูลหัวเรื่อง",
                         ),
                         validator: (value) {
                           if ((value == null) || (value.isEmpty)) {
-                            return "This field is not empty.";
+                            return "กรุณากรอกข้อมูล";
                           } else if (value.length <= 5) {
-                            return "This field must be equal 5 characters.";
+                            return "กรอกข้อมูลอย่างน้อย 5 ตัวอักษร";
                           }
                           return null;
                         },
@@ -216,7 +218,7 @@ class _AddTaskState extends State<AddTask> {
                 ),
               ]),
               Row(children: [
-                Text("DESCRIPTION: "),
+                Text("รายละเอียด: ",style: TextStyle(fontSize: 16),),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
@@ -226,14 +228,14 @@ class _AddTaskState extends State<AddTask> {
                         controller: taskDes,
                         decoration: InputDecoration(
                           // labelText: "Description",
-                          hintText: "Enter Description",
+                          hintText: "กรอกข้อมูลรายละเอียด",
                         ),
                         maxLength: 500,
                         validator: (value) {
                           if ((value == null) || (value.isEmpty)) {
-                            return "This field is not empty.";
+                            return "กรุณากรอกข้อมูล";
                           } else if (value.length <= 5) {
-                            return "This field must be equal 5 characters.";
+                            return "กรอกข้อมูลอย่างน้อย 5 ตัวอักษร";
                           }
                           return null;
                         },
@@ -244,7 +246,7 @@ class _AddTaskState extends State<AddTask> {
               ]),
               Row(
                 children: [
-                  Text("DUEDATE: "),
+                  Text("วันที่จะให้ส่ง: ",style: TextStyle(fontSize: 16),),
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.all(8.0),
@@ -286,7 +288,7 @@ class _AddTaskState extends State<AddTask> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text("DEPARTMENT: "),
+                    Text("แผนก: ",style: TextStyle(fontSize: 16),),
                     Expanded(
                       child: DropdownButtonHideUnderline(
                         child: ButtonTheme(
@@ -299,14 +301,21 @@ class _AddTaskState extends State<AddTask> {
                               color: Colors.black54,
                               fontSize: 16,
                             ),
-                            hint: Text('Select Department'),
+                            hint: Text('เลือกแผนก'),
                             onChanged: (String newValue) {
                               setState(() {
-                                _myState = newValue;
+                                 _myState = newValue;
+                                disabledropdown = true;
+                                // _myCity;
                                 // _getCitiesList();
                                 // getUsers(_myState);
                                 // print(_myState);
-                                _dropDownMenuUsers();
+                                if(_myCity != null){
+                                  _myCity = null;
+                                  _dropDownMenuUsers(_myState);
+                                }else{
+                                  _dropDownMenuUsers(_myState);
+                                }
                               });
                             },
                             items: _department?.map((item) {
@@ -329,7 +338,7 @@ class _AddTaskState extends State<AddTask> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text("ASSIGNMENT: "),
+                    Text("พนักงานที่จะให้งาน: ",style: TextStyle(fontSize: 16),),
                     Expanded(
                       child: DropdownButtonHideUnderline(
                         child: ButtonTheme(
@@ -342,8 +351,8 @@ class _AddTaskState extends State<AddTask> {
                               color: Colors.black54,
                               fontSize: 16,
                             ),
-                            hint: Text('Select Assignment'),
-                            onChanged: (String newValue) {
+                            hint: Text('เลือกพนักงาน'),
+                            onChanged: disabledropdown ? null : (String newValue) {
                               setState(() {
                                 _myCity = newValue;
                                 // _getCitiesList();
@@ -373,10 +382,10 @@ class _AddTaskState extends State<AddTask> {
                 children: <Widget>[
                   RaisedButton(
                     child: Text(
-                      "Save",
+                      "บันทึก",
                       style: TextStyle(color: Colors.white),
                     ),
-                    color: Colors.blue,
+                    color: Colors.green,
                     onPressed: () => {
                       if (_formKey.currentState.validate())
                         {
@@ -387,7 +396,7 @@ class _AddTaskState extends State<AddTask> {
                   SizedBox(width: 20.0),
                   RaisedButton(
                     child: Text(
-                      "Cancel",
+                      "ยกเลิก",
                       style: TextStyle(color: Colors.white),
                     ),
                     color: Colors.red,
@@ -426,7 +435,7 @@ class _AddTaskState extends State<AddTask> {
     return items;
   }
 
-  _dropDownMenuUsers() async {
+  _dropDownMenuUsers(String _myState) async {
     _users = await getUsers(_myState);
     _dropdownMenuUsersItems =
     usersLoading ? _buildDropdownMenuUsersItems(_users) : List();
@@ -434,6 +443,8 @@ class _AddTaskState extends State<AddTask> {
     setState(() {
       usersLoading = false;
       _loading = false;
+      disabledropdown = false;
+
     });
   }
 

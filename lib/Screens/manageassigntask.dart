@@ -123,7 +123,7 @@ class _ManageAssignTaskState extends State<ManageAssignTask> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(_loading ? 'Loading...' : "Your Task"),
+        title: Text(_loading ? 'กำลังโหลด...' : "งานของท่าน"),
         elevation: 6.0,
         shape: ContinuousRectangleBorder(
           borderRadius: const BorderRadius.only(
@@ -153,7 +153,7 @@ class _ManageAssignTaskState extends State<ManageAssignTask> {
         if (_task.length == 0) {
           return Center(
             child: Text(
-              "No Result",
+              "ไม่มีข้อมูล",
               style: TextStyle(color: Colors.white70, fontSize: 20),
             ),
           );
@@ -205,7 +205,7 @@ class _ManageAssignTaskState extends State<ManageAssignTask> {
                                         height: 16,
                                       ),
                                       Text(
-                                          "Subject : " +
+                                          "หัวเรื่อง : " +
                                               _task[index].subject,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
@@ -305,7 +305,7 @@ class _ManageAssignTaskState extends State<ManageAssignTask> {
     new Future.delayed(new Duration(milliseconds: 2)).then((_) {
       completer.complete();
       setState(() {
-        _loading = false;
+        _loading = true;
         Jsondata.getAssignTask().then((checkins) {
           setState(() {
             _task = checkins;
@@ -330,17 +330,17 @@ class _ManageAssignTaskState extends State<ManageAssignTask> {
   TextStatus(int index) {
     if (_task[index].statustaskid == 1) {
       return Text(
-        "Status : งานใหม่",
+        "สถานะ : งานใหม่",
         style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700),
       );
     } else if (_task[index].statustaskid == 2) {
       return Text(
-        "Status : กำลังดำเนินการ",
+        "สถานะ : กำลังดำเนินการ",
         style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700),
       );
     }else if (_task[index].statustaskid == 3) {
       return Text(
-        "Status : ปิดงานแล้ว",
+        "สถานะ : ปิดงานแล้ว",
         style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700),
       );
     }
@@ -351,7 +351,7 @@ class _ManageAssignTaskState extends State<ManageAssignTask> {
       return Padding(
         padding: EdgeInsets.all(4),
         child: RaisedButton(
-          color: Colors.amber,
+          color: Colors.green,
           onPressed: () {
             setState(() {
               // showAlertUpdate(news);
@@ -374,7 +374,7 @@ class _ManageAssignTaskState extends State<ManageAssignTask> {
           ),
           child: Text(
             "รับรู้งาน",
-            style: TextStyle(color: Colors.white70),
+            style: TextStyle(color: Colors.white),
           ),
         ),
       );
@@ -401,7 +401,7 @@ class _ManageAssignTaskState extends State<ManageAssignTask> {
           ),
           child: Text(
             "ส่งงาน",
-            style: TextStyle(color: Colors.white70),
+            style: TextStyle(color: Colors.white),
           ),
         ),
       );
@@ -409,7 +409,7 @@ class _ManageAssignTaskState extends State<ManageAssignTask> {
       return Padding(
         padding: EdgeInsets.all(4),
         child: RaisedButton(
-          color: Colors.blueGrey,
+          color: Colors.green,
           onPressed: () {
             setState(() {
               // _showDetail(index);
@@ -430,8 +430,8 @@ class _ManageAssignTaskState extends State<ManageAssignTask> {
             borderRadius: BorderRadius.circular(30.0),
           ),
           child: Text(
-            "Detail",
-            style: TextStyle(color: Colors.white70),
+            "รายละเอียด",
+            style: TextStyle(color: Colors.white),
           ),
         ),
       );

@@ -175,7 +175,7 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(_loading ? 'Loading...' : "History"),
+        title: Text(_loading ? 'กำลังโหลด...' : "ประวัติการเข้างาน-ออกงาน"),
         elevation: 6.0,
         shape: ContinuousRectangleBorder(
           borderRadius: const BorderRadius.only(
@@ -196,9 +196,13 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Text(
-                          "วันที่: ${DateFormat('dd/MM/yyyy').format(_startDate).toString()}"),
+                          "วันที่: ${DateFormat('dd/MM/yyyy').format(_startDate).toString()}"
+                        ,style: TextStyle(fontSize: 16),),
+                      SizedBox(width: 8,),
                       Text(
-                          "ถึงวันที่: ${DateFormat('dd/MM/yyyy').format(_endDate).toString()}"),
+                          "ถึงวันที่: ${DateFormat('dd/MM/yyyy').format(_endDate).toString()}"
+                        ,style: TextStyle(fontSize: 16),),
+                      SizedBox(width: 2,),
                       RaisedButton(
                           child: Text("ค้นหา"),
                           onPressed: () async {
@@ -336,12 +340,13 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
                                           child: Text(
                                             "เข้างาน",
                                             style: TextStyle(
+                                                fontSize: 16,
                                                 color: Colors.black87,
                                                 fontWeight: FontWeight.w700),
                                           ),
                                         ),
                                         SizedBox(
-                                          height: 16,
+                                          height: 10,
                                         ),
                                         Text(
                                           "วันที่ : " +
@@ -350,6 +355,7 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
                                                       .dateStart)
                                                   .substring(0, 10),
                                           style: TextStyle(
+                                              fontSize: 16,
                                               color: Colors.black87,
                                               fontWeight: FontWeight.w700),
                                         ),
@@ -360,6 +366,7 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
                                                       .dateStart)
                                                   .substring(11, 19),
                                           style: TextStyle(
+                                              fontSize: 16,
                                               color: Colors.black87,
                                               fontWeight: FontWeight.w700),
                                         ),
@@ -379,12 +386,13 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
                                         child: Text(
                                           "ออกงาน",
                                           style: TextStyle(
+                                              fontSize: 16,
                                               color: Colors.black87,
                                               fontWeight: FontWeight.w700),
                                         ),
                                       ),
                                       SizedBox(
-                                        height: 16,
+                                        height: 10,
                                       ),
                                       Text(
                                         "วันที่ : " +
@@ -393,6 +401,7 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
                                                     _historycin[index].dateEnd))
                                                 .substring(0, 10),
                                         style: TextStyle(
+                                            fontSize: 16,
                                             color: Colors.black87,
                                             fontWeight: FontWeight.w700),
                                       ),
@@ -403,6 +412,7 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
                                                     _historycin[index].dateEnd))
                                                 .substring(11, 19),
                                         style: TextStyle(
+                                            fontSize: 16,
                                             color: Colors.black87,
                                             fontWeight: FontWeight.w700),
                                       ),
@@ -414,7 +424,7 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
                             Padding(
                               padding: EdgeInsets.all(4),
                               child: RaisedButton(
-                                color: Colors.blueGrey,
+                                color: Colors.green,
                                 onPressed: () {
                                   setState(() {
                                     // _showDetail(index);
@@ -436,7 +446,7 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
                                   borderRadius: BorderRadius.circular(30.0),
                                 ),
                                 child: Text(
-                                  "Detail",
+                                  "รายละเอียด",
                                   style: TextStyle(color: Colors.white70),
                                 ),
                               ),

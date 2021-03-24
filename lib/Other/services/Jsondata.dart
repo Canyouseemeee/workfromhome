@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workfromhome/Models/Checkin.dart';
 import 'package:workfromhome/Models/Historycin.dart';
+import 'package:workfromhome/Models/Solvework.dart';
 import 'package:workfromhome/Models/Task.dart';
 import 'package:workfromhome/Other/constants.dart';
 
@@ -89,5 +90,27 @@ class Jsondata{
       return List<Task>();
     }
   }
+
+  static Future<List<Task>> getHistoryAssignTask() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var id = sharedPreferences.getString("userid");
+    Map data = {'userid': id};
+    var jsonData = null;
+    const String url = Apiurl+"/api/gethistoryassigntask";
+    try {
+      final response = await http.post(url, body: data);
+      if (response.statusCode == 200) {
+        if (response.body.isNotEmpty) {
+          final List<Task> tasks = taskFromJson(response.body);
+          return tasks;
+        }
+      } else {
+        return List<Task>();
+      }
+    } catch (e) {
+      return List<Task>();
+    }
+  }
+
 
 }

@@ -68,9 +68,9 @@ class _MapSampleState extends State<MapSample> {
   localMarker() {
     setState(() {
       _makers.add(Marker(
-          markerId: MarkerId("myLocation"),
+          markerId: MarkerId("ตำแหน่งของท่าน"),
           infoWindow: InfoWindow(
-            title: 'You are here.',
+            title: 'ท่านอยู่นี่',
             snippet: 'lat = 13.5843667,  lng = 100.7279383',
           ),
           position: LatLng(lat, lng)),
@@ -86,9 +86,9 @@ class _MapSampleState extends State<MapSample> {
     // print(sharedPreferences.getString("longitude"));
     setState(() {
       _makers.add(Marker(
-          markerId: MarkerId("Checkin"),
+          markerId: MarkerId("ตำแหน่งของจุดเช็คอิน"),
           infoWindow: InfoWindow(
-            title: 'Checkin.',
+            title: 'จุดเช็คอิน',
             // snippet: 'lat = 13.5843667,  lng = 100.7279383',
           ),
           position: LatLng(latpoint, lngpoint)),
@@ -101,7 +101,7 @@ class _MapSampleState extends State<MapSample> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Map"),
+        title: Text("แผนที่"),
         backgroundColor: Colors.white,
         elevation: 6.0,
         shape: ContinuousRectangleBorder(

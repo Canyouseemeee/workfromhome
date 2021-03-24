@@ -77,15 +77,15 @@ class _HomePageState extends State<HomePage> {
                       badgeCount: snapshot.data,
                     ),
                   ),
-                  title: const Text("Home"),
+                  title: const Text("หน้าแรก"),
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.assistant_photo),
-                  title: Text("Task"),
+                  title: Text("งาน"),
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.menu),
-                  title: Text("Menu"),
+                  title: Text("เมนู"),
                 ),
               ],
               onTap: (index) {

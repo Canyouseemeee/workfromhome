@@ -90,7 +90,7 @@ class _BodyState extends State<Body> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "LOGIN",
+                      "WFH",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: size.height * 0.03),
@@ -120,7 +120,7 @@ class _BodyState extends State<Body> {
                         color: kPrimaryColor,
                         padding:
                             EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                        child: Text("Login",
+                        child: Text("เข้าสู่ระบบ",
                             style: TextStyle(color: Colors.white)),
                         onPressed: () {
                           // _submit();
@@ -150,7 +150,7 @@ class _BodyState extends State<Body> {
           cursorColor: kPrimaryColor,
           controller: usernameController,
           decoration: InputDecoration(
-            labelText: 'Username',
+            labelText: 'ชื่อผู้ใช้',
             // hintText: 'Username',
             icon: Icon(Icons.person, color: kPrimaryColor),
             border: InputBorder.none,
@@ -166,7 +166,7 @@ class _BodyState extends State<Body> {
           cursorColor: kPrimaryColor,
           controller: passwordController,
           decoration: InputDecoration(
-            labelText: 'Password',
+            labelText: 'รหัสผ่าน',
             icon: Icon(
               Icons.lock,
               color: kPrimaryColor,
@@ -189,7 +189,7 @@ class _BodyState extends State<Body> {
         barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
-            title: Text("Username หรือ Password ไม่ถูกต้อง"),
+            title: Text("ชื่อผู้ใช้ หรือ รหัสผ่าน ไม่ถูกต้อง"),
             // content: Text("Are you sure"),
             actions: [
               FlatButton(
@@ -198,7 +198,7 @@ class _BodyState extends State<Body> {
                   passwordController.clear();
                   Navigator.pop(context);
                 },
-                child: Text("OK"),
+                child: Text("ปิด"),
               ),
             ],
           );

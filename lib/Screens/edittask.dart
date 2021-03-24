@@ -160,7 +160,7 @@ class _EditTaskState extends State<EditTask> {
           setState(() {
             _loading = false;
           });
-          Toast.show("Update Task Successful.", context,
+          Toast.show("อัพเดทข้อมูลสำเร็จ", context,
               gravity: Toast.CENTER, duration: 2);
           Navigator.pop(context, true);
           // Navigator.of(context).pushAndRemoveUntil(
@@ -179,7 +179,7 @@ class _EditTaskState extends State<EditTask> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(_loading ? 'Loading...' : "Task [Edit]"),
+        title: Text(_loading ? 'กำลังโหลด...' : "แก้ไขภาระงาน"),
         elevation: 6.0,
         shape: ContinuousRectangleBorder(
           borderRadius: const BorderRadius.only(
@@ -208,7 +208,7 @@ class _EditTaskState extends State<EditTask> {
           child: ListView(
             children: <Widget>[
               Row(children: [
-                Text("SUBJECT: "),
+                Text("หัวเรื่อง: ",style: TextStyle(fontSize: 16),),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
@@ -218,13 +218,13 @@ class _EditTaskState extends State<EditTask> {
                         controller: taskSub,
                         decoration: InputDecoration(
                           // labelText: "Subject",
-                          hintText: "Enter Subject",
+                          hintText: "กรอกข้อมูลหัวเรื่อง",
                         ),
                         validator: (value) {
                           if ((value == null) || (value.isEmpty)) {
-                            return "This field is not empty.";
+                            return "กรุณากรอกข้อมูล";
                           } else if (value.length <= 5) {
-                            return "This field must be equal 5 characters.";
+                            return "กรอกข้อมูลอย่างน้อย 5 ตัวอักษร";
                           }
                           return null;
                         },
@@ -234,7 +234,7 @@ class _EditTaskState extends State<EditTask> {
                 ),
               ]),
               Row(children: [
-                Text("DESCRIPTION: "),
+                Text("รายละเอียด: ",style: TextStyle(fontSize: 16),),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
@@ -244,14 +244,14 @@ class _EditTaskState extends State<EditTask> {
                         controller: taskDes,
                         decoration: InputDecoration(
                           // labelText: "Description",
-                          hintText: "Enter Description",
+                          hintText: "กรอกข้อมูลรายละเอียด",
                         ),
                         maxLength: 500,
                         validator: (value) {
                           if ((value == null) || (value.isEmpty)) {
-                            return "This field is not empty.";
+                            return "กรุณากรอกข้อมูล";
                           } else if (value.length <= 5) {
-                            return "This field must be equal 5 characters.";
+                            return "กรอกข้อมูลอย่างน้อย 5 ตัวอักษร";
                           }
                           return null;
                         },
@@ -262,7 +262,7 @@ class _EditTaskState extends State<EditTask> {
               ]),
               Row(
                 children: [
-                  Text("DUEDATE: "),
+                  Text("วันที่จะให้ส่ง: ",style: TextStyle(fontSize: 16),),
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.all(8.0),
@@ -290,7 +290,7 @@ class _EditTaskState extends State<EditTask> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text("DEPARTMENT: "),
+                    Text("แผนก: ",style: TextStyle(fontSize: 16),),
                     Expanded(
                       child: DropdownButtonHideUnderline(
                         child: ButtonTheme(
@@ -340,7 +340,7 @@ class _EditTaskState extends State<EditTask> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text("ASSIGNMENT: "),
+                    Text("พนักงานที่จะให้งาน: ",style: TextStyle(fontSize: 16),),
                     Expanded(
                       child: DropdownButtonHideUnderline(
                         child: ButtonTheme(
@@ -353,7 +353,7 @@ class _EditTaskState extends State<EditTask> {
                               color: Colors.black54,
                               fontSize: 16,
                             ),
-                            hint: Text('Select Assignment'),
+                            hint: Text('เลือกพนักงาน'),
                             onChanged: disabledropdown ? null : (String newValue) {
                               setState(() {
                                 _myCity = newValue;
@@ -398,7 +398,7 @@ class _EditTaskState extends State<EditTask> {
                 children: <Widget>[
                   RaisedButton(
                     child: Text(
-                      "Save",
+                      "บันทึก",
                       style: TextStyle(color: Colors.white),
                     ),
                     color: Colors.blue,
@@ -420,7 +420,7 @@ class _EditTaskState extends State<EditTask> {
                   SizedBox(width: 20.0),
                   RaisedButton(
                     child: Text(
-                      "Cancel",
+                      "ยกเลิก",
                       style: TextStyle(color: Colors.white),
                     ),
                     color: Colors.red,
