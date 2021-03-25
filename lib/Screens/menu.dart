@@ -14,6 +14,7 @@ class _MenuState extends State<Menu> {
   String _username;
   String _name;
   String _department;
+  String Url;
 
   @override
   void initState() {
@@ -80,10 +81,11 @@ class _MenuState extends State<Menu> {
                                       child: CircleAvatar(
                                         backgroundColor: Colors.transparent,
                                         radius: 30.0,
-                                        // backgroundImage: Url == null
-                                        //     ? NetworkImage(
-                                        //   // "https://cdn.icon-icons.com/icons2/1674/PNG/512/person_110935.png")
-                                        //     "https://media1.tenor.com/images/82c6e055245fc8fa7381dc887bf14e62/tenor.gif?itemid=12170592")
+                                        backgroundImage: Url == null
+                                            ? NetworkImage(
+                                          // "https://cdn.icon-icons.com/icons2/1674/PNG/512/person_110935.png")
+                                            "https://media1.tenor.com/images/82c6e055245fc8fa7381dc887bf14e62/tenor.gif?itemid=12170592")
+                                            : NetworkImage('${Url}'),
                                         //     : NetworkImage('${Url}'),
                                         // // backgroundImage: NetworkImage("http://cnmihelpdesk.rama.mahidol.ac.th/storage/"+image),
                                         //
@@ -94,7 +96,7 @@ class _MenuState extends State<Menu> {
                                       padding: const EdgeInsets.only(
                                           top: 16, left: 16, right: 16),
                                       child: Text(
-                                        "Username : "+'${_username}',
+                                        "ชื่อผู้ใช้ : "+'${_username}',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -103,7 +105,7 @@ class _MenuState extends State<Menu> {
                                       padding: const EdgeInsets.only(
                                           top: 16, left: 16, right: 16),
                                       child: Text(
-                                        "Name : " +'${_name}',
+                                        "ชื่อ-นามสกุล : " +'${_name}',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -112,7 +114,7 @@ class _MenuState extends State<Menu> {
                                       padding: const EdgeInsets.only(
                                           top: 16, left: 16, right: 16),
                                       child: Text(
-                                        "Department : " +'${_department}',
+                                        "แผนก : " +'${_department}',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),

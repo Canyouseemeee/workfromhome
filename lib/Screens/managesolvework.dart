@@ -143,20 +143,22 @@ class _ManageSolveworkState extends State<ManageSolvework> {
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               content: Container(
-                height: 120,
+                height: 190,
                 child: Column(
                   children: [
                     Row(
                       children: [
-                        Text("หัวเรื่องที่ให้แก้: "),
+                        Text("หัวเรื่องที่ให้แก้ไข: "),
                         Expanded(
                           child: Padding(
                             padding: EdgeInsets.all(8.0),
                             child: TextFormField(
+                              minLines: 1,
+                              maxLines: 5,
                               controller: EditSub,
                               decoration: InputDecoration(
                                 // labelText: "Subject",
-                                hintText: "หัวเรื่องที่ให้แก้",
+                                hintText: "หัวเรื่องที่ให้แก้ไข",
                               ),
                               validator: (value) {
                                 if ((value == null) || (value.isEmpty)) {
@@ -206,7 +208,7 @@ class _ManageSolveworkState extends State<ManageSolvework> {
                       },
                     ),
                     new FlatButton(
-                      child: new Text('ปิด'),
+                      child: new Text('ยกเลิก'),
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -228,20 +230,23 @@ class _ManageSolveworkState extends State<ManageSolvework> {
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               content: Container(
-                height: 120,
+                height: 190,
                 child: Column(
                   children: [
                     Row(
                       children: [
-                        Text("หัวเรื่องที่ให้แก้: "),
+                        Text("หัวเรื่องที่ให้แก้ไข: "),
                         Expanded(
                           child: Padding(
                             padding: EdgeInsets.all(8.0),
                             child: TextFormField(
+                              minLines: 1,
+                              maxLines: 5,
+                              // expands: true,
                               controller: EditSub,
                               decoration: InputDecoration(
                                 // labelText: "Subject",
-                                hintText: "อธิบายสิ่งที่ให้แก้",
+                                hintText: "อธิบายสิ่งที่ให้แก้ไข",
                               ),
                               validator: (value) {
                                 if ((value == null) || (value.isEmpty)) {
@@ -296,7 +301,7 @@ class _ManageSolveworkState extends State<ManageSolvework> {
                       },
                     ),
                     new FlatButton(
-                      child: new Text('ปิด'),
+                      child: new Text('ยกเลิก'),
                       onPressed: () {
                         Navigator.pop(context);
                       },

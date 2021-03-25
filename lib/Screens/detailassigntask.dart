@@ -376,17 +376,17 @@ class _DetailAssignTaskState extends State<DetailAssignTask> {
     if (task.statustaskid == 1) {
       return Text(
         "สถานะ : งานใหม่",
-        style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700),
+        style: TextStyle(fontSize: 16,color: Colors.black87, fontWeight: FontWeight.w700),
       );
     } else if (task.statustaskid == 2) {
       return Text(
         "สถานะ : กำลังดำเนินการ",
-        style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700),
+        style: TextStyle(fontSize: 16,color: Colors.black87, fontWeight: FontWeight.w700),
       );
     }else if (task.statustaskid == 3) {
       return Text(
         "สถานะ : ปิดงานแล้ว",
-        style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700),
+        style: TextStyle(fontSize: 16,color: Colors.black87, fontWeight: FontWeight.w700),
       );
     }
   }

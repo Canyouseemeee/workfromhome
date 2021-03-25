@@ -168,6 +168,7 @@ class _DetailSolveworkState extends State<DetailSolvework> {
                 onPressed: () {
                   Navigator.pop(context);
                   _handleRefresh();
+                  Navigator.pop(context);
                 },
                 child: Text("ปิด"),
               ),
@@ -385,6 +386,7 @@ class _DetailSolveworkState extends State<DetailSolvework> {
         ),
         Row(
           children: [
+            ButtonStatus(),
             ButtonDownloadfile(solvework),
             ButtonViewfile(solvework),
           ],
@@ -455,29 +457,16 @@ class _DetailSolveworkState extends State<DetailSolvework> {
   }
 
   ButtonStatus() {
-    if (solvework.statussolveworkid == 1) {
+    if (solvework.statussolveworkid == 1 ) {
       return Center(
         child: Container(
-          width: MediaQuery.of(context).size.width,
           height: 50.0,
           margin: EdgeInsets.all(10),
-          padding: EdgeInsets.symmetric(horizontal: 80.0),
+          // padding: EdgeInsets.symmetric(horizontal: 80.0),
           child: RaisedButton(
             color: Colors.green,
             onPressed: () {
               setState(() {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //       builder: (context) =>
-                //           Comment(task.issuesid.toString())),
-                // ).then((value) {
-                //   setState(() {
-                //     _handleRefresh();
-                //
-                //   });
-                // });
-                // _openFileExplorer();
                 _showDialog(context);
               });
             },

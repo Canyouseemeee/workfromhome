@@ -112,5 +112,26 @@ class Jsondata{
     }
   }
 
+  static Future<List<Solvework>> getHistorysolvework() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var id = sharedPreferences.getString("userid");
+    Map data = {'userid': id};
+    var jsonData = null;
+    const String url = Apiurl+"/api/gethistoryassigntask";
+    try {
+      final response = await http.post(url, body: data);
+      if (response.statusCode == 200) {
+        if (response.body.isNotEmpty) {
+          final List<Solvework> tasks = solveworkFromJson(response.body);
+          return tasks;
+        }
+      } else {
+        return List<Solvework>();
+      }
+    } catch (e) {
+      return List<Solvework>();
+    }
+  }
+
 
 }

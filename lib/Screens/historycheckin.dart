@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:dropdownfield/dropdownfield.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workfromhome/Models/Checkin.dart';
 import 'package:workfromhome/Models/Historycin.dart';
+import 'package:workfromhome/Models/Users.dart';
 import 'package:workfromhome/Other/components/rounded_button.dart';
 import 'package:intl/intl.dart';
 import 'package:workfromhome/Other/constants.dart';
@@ -35,6 +37,11 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
   Timer _timer;
   bool _disposed = false;
   final df = new DateFormat('dd/MM/yyyy HH:mm a');
+  List<Users> _users =  new List();
+  bool usersLoading = true;
+  List<DropdownMenuItem<Users>> _dropdownMenuUsersItems;
+  Users _selectedUsers;
+  String userid;
 
   Future displayDateRangePicker(BuildContext context) async {
     final List<DateTime> picked = await DateRagePicker.showDatePicker(
@@ -81,6 +88,23 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
     }
   }
 
+  static Future<List<Users>> getUsers() async {
+    const String url = Apiurl + "/api/getuserhis";
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        if (response.body.isNotEmpty) {
+          final List<Users> users = usersFromJson(response.body);
+          return users;
+        }
+      } else {
+        return List<Users>();
+      }
+    } catch (e) {
+      return List<Users>();
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -92,6 +116,7 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
     });
     super.initState();
     _loading = true;
+    _dropDownMenuUsers();
     Jsondata.getHistoryCheckin().then((historycin) {
       if (mounted)
         setState(() {
@@ -192,6 +217,48 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
               child: Column(
                 // mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  // Container(
+                  //   height: 100,
+                  //   child: FormField(
+                  //     builder: (FormFieldState state) {
+                  //       return DropdownButtonHideUnderline(
+                  //         child: new Column(
+                  //           crossAxisAlignment: CrossAxisAlignment.stretch,
+                  //           children: <Widget>[
+                  //             new InputDecorator(
+                  //               decoration: InputDecoration(
+                  //                 filled: false,
+                  //                 hintText: 'Choose Country',
+                  //                 prefixIcon: Icon(Icons.location_on),
+                  //                 labelText:
+                  //                 _selectedUsers == null ? 'Where are you from' : 'From',
+                  //                 // errorText: _errorText,
+                  //               ),
+                  //               isEmpty: _selectedUsers == null,
+                  //               child: new DropdownButton<Users>(
+                  //                 value: _selectedUsers,
+                  //                 isDense: true,
+                  //                 onChanged: (Users newValue) {
+                  //                   // print('value change');
+                  //                   // print(newValue);
+                  //                   setState(() {
+                  //                     _selectedUsers = newValue;
+                  //                   });
+                  //                 },
+                  //                 items: _users.map((Users value) {
+                  //                   return DropdownMenuItem<Users>(
+                  //                     value: value,
+                  //                     child: Text(value.id),
+                  //                   );
+                  //                 }).toList(),
+                  //               ),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
@@ -510,5 +577,32 @@ class _HistoryCheckinState extends State<HistoryCheckin> {
             ))
           : _showJsondata());
     }
+  }
+
+  _dropDownMenuUsers() async {
+    _users = await getUsers();
+    _dropdownMenuUsersItems =
+    usersLoading ? _buildDropdownMenuUsersItems(_users) : List();
+    _selectedUsers = _dropdownMenuUsersItems[0].value;
+    print(_users.length.toString());
+    setState(() {
+      usersLoading = false;
+      _loading = false;
+      // disabledropdown = false;
+
+    });
+  }
+
+  List<DropdownMenuItem<Users>> _buildDropdownMenuUsersItems(List users) {
+    List<DropdownMenuItem<Users>> items = List();
+    for (Users u in users) {
+      items.add(
+        DropdownMenuItem(
+          value: u,
+          child: Text(u.id),
+        ),
+      );
+    }
+    return items;
   }
 }

@@ -112,7 +112,7 @@ class _AddTaskState extends State<AddTask> {
     _loading = false;
     taskSub.text = "";
     taskDes.text = "";
-    taskDue.text = "กรุณาเลือกวันที่และเวลาที่จะส่งงาน";
+    taskDue.text = "กรุณาเลือกวันที่จะส่งงาน";
     _dropDownMenuDepartment();
     // datepicker();
   }

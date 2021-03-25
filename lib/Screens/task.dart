@@ -6,8 +6,10 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:workfromhome/Other/constants.dart';
 import 'package:workfromhome/Screens/addtask.dart';
 import 'package:workfromhome/Screens/historyassigntask.dart';
+import 'package:workfromhome/Screens/historysolvework.dart';
 import 'package:workfromhome/Screens/manageassigntask.dart';
 import 'package:workfromhome/Screens/managetask.dart';
+import 'package:workfromhome/Screens/reportdepartment.dart';
 
 class Task extends StatefulWidget {
   @override
@@ -61,74 +63,106 @@ class _TaskState extends State<Task> {
                 child: new CircularProgressIndicator(
                 backgroundColor: Colors.pinkAccent,
               ))
-            : Center(
-                child: Container(
-                  // alignment: Alignment.center,
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  height: MediaQuery.of(context).size.height * 0.7,
-                  child: Card(
-                    child: Column(
-                      children: <Widget>[
-                        _logo(),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        ShowButton(),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          height: MediaQuery.of(context).size.height * 0.07,
-                          child: RaisedButton(
-                            color: Color(0xFFFF9C68),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ManageAssignTask()),
-                              ).then((value) {
-                                setState(() {
-                                  _handleRefresh();
-                                });
-                              });
-                            },
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                            child: Text("งานของท่าน",style: TextStyle(fontSize: 16),),
+            : ListView(
+              children:[
+                Center(
+                  child: Container(
+                    // alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: Card(
+                      child: Column(
+                        children: <Widget>[
+                          _logo(),
+                          SizedBox(
+                            height: 16,
                           ),
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          height: MediaQuery.of(context).size.height * 0.07,
-                          child: RaisedButton(
-                            color: Color(0xFFFF9C68),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HistoryAssignTask()),
-                              ).then((value) {
-                                setState(() {
-                                  _handleRefresh();
-                                });
-                              });
-                            },
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                            child: Text("ประวัติการส่งงาน",style: TextStyle(fontSize: 16),),
+                          ShowButton(),
+                          SizedBox(
+                            height: 16,
                           ),
-                        ),
-                      ],
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.07,
+                            child: RaisedButton(
+                              color: Color(0xFFFF9C68),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ManageAssignTask()),
+                                ).then((value) {
+                                  setState(() {
+                                    _handleRefresh();
+                                  });
+                                });
+                              },
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              child: Text("งานของท่าน",style: TextStyle(fontSize: 16),),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.07,
+                            child: RaisedButton(
+                              color: Color(0xFFFF9C68),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HistoryAssignTask()),
+                                ).then((value) {
+                                  setState(() {
+                                    _handleRefresh();
+                                  });
+                                });
+                              },
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              child: Text("ประวัติการส่งงาน",style: TextStyle(fontSize: 16),),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.07,
+                            child: RaisedButton(
+                              color: Color(0xFFFF9C68),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HistorySolvework()),
+                                ).then((value) {
+                                  setState(() {
+                                    _handleRefresh();
+                                  });
+                                });
+                              },
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              child: Text("ประวัติการแก้ไขงาน",style: TextStyle(fontSize: 16),),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              )),
+              ]
+            )),
       ),
     );
   }
@@ -184,6 +218,7 @@ class _TaskState extends State<Task> {
       return Container();
     }
   }
+
 
   Future<Null> _handleRefresh() async {
     Completer<Null> completer = new Completer<Null>();

@@ -15,6 +15,7 @@ class Solvework {
     this.createsolvework,
     this.subject,
     this.statussolveworkid,
+    this.statussolvework,
     this.departmentid,
     this.dmname,
     this.assignment,
@@ -30,6 +31,7 @@ class Solvework {
   String createsolvework;
   String subject;
   int statussolveworkid;
+  int statussolvework;
   int departmentid;
   String dmname;
   String assignment;
@@ -45,6 +47,7 @@ class Solvework {
     createsolvework: json["createsolvework"],
     subject: json["subject"],
     statussolveworkid: json["statussolveworkid"],
+    statussolvework: json["statussolvework"],
     departmentid: json["departmentid"],
     dmname: json["dmname"],
     assignment: json["assignment"],
@@ -61,6 +64,7 @@ class Solvework {
     "createsolvework": createsolvework,
     "subject": subject,
     "statussolveworkid": statussolveworkid,
+    "statussolvework": statussolvework,
     "departmentid": departmentid,
     "dmname": dmname,
     "assignment": assignment,

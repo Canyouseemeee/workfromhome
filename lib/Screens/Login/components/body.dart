@@ -90,8 +90,8 @@ class _BodyState extends State<Body> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "WFH",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      "Work From Home",
+                      style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: size.height * 0.03),
                     FadeInImage.memoryNetwork(

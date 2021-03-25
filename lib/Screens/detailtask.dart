@@ -228,16 +228,18 @@ class _DetailTaskState extends State<DetailTask> {
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               content: Container(
-                height: 120,
+                height: 190,
                 child: Column(
                   children: [
                     Row(
                       children: [
-                        Text("อธิบายสิ่งที่ให้แก้: "),
+                        Text("อธิบายสิ่งที่ให้แก้ไข: "),
                         Expanded(
                           child: Padding(
                             padding: EdgeInsets.all(8.0),
                             child: TextFormField(
+                              minLines: 1,
+                              maxLines: 5,
                               controller: EditSub,
                               decoration: InputDecoration(
                                 // labelText: "Subject",
